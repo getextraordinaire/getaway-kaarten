@@ -30,12 +30,12 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Johannesburg","days":0,"lng":28.042114,"lat":-26.204678},{"order":2,"destination":"Johannesburg","days":1,"lng":28.042114,"lat":-26.204678},{"order":3,"destination":"Graskop","days":1,"lng":30.840658,"lat":-24.933699},{"order":4,"destination":"Kruger National Park","days":2,"lng":31.574825,"lat":-23.853079},{"order":5,"destination":"eSwatini","days":1,"lng":31.13396,"lat":-26.314901},{"order":6,"destination":"St. Lucia","days":2,"lng":32.411842,"lat":-28.374832},{"order":7,"destination":"Drakensberg","days":2,"lng":29.126863,"lat":-28.612917},{"order":8,"destination":"Clarens","days":1,"lng":28.42062,"lat":-28.515364},{"order":9,"destination":"Lesotho","days":2,"lng":27.496523,"lat":-29.344175},{"order":10,"destination":"Cradock","days":1,"lng":25.617104,"lat":-32.169456},{"order":11,"destination":"Addo","days":2,"lng":25.688894,"lat":-33.558258},{"order":12,"destination":"Knysna","days":2,"lng":23.048079,"lat":-34.03538},{"order":13,"destination":"Swellendam","days":1,"lng":20.44437,"lat":-34.019894},{"order":14,"destination":"Hermanus","days":1,"lng":19.241768,"lat":-34.420567},{"order":15,"destination":"Kaapstad","days":2,"lng":18.420296,"lat":-33.922497}];
+const stops = [{"order":1,"destination":"Johannesburg","days":0,"lng":28.042114,"lat":-26.204678},{"order":2,"destination":"Graskop","days":1,"lng":30.840658,"lat":-24.933699},{"order":3,"destination":"Kruger National Park","days":2,"lng":31.574825,"lat":-23.853079},{"order":4,"destination":"eSwatini","days":1,"lng":31.13396,"lat":-26.314901},{"order":5,"destination":"St. Lucia","days":2,"lng":32.411842,"lat":-28.374832},{"order":6,"destination":"Drakensberg","days":2,"lng":29.35244,"lat":-28.731415},{"order":7,"destination":"Clarens","days":1,"lng":28.42062,"lat":-28.515364},{"order":8,"destination":"Lesotho","days":2,"lng":27.496523,"lat":-29.344175},{"order":9,"destination":"Cradock","days":1,"lng":25.617104,"lat":-32.169456},{"order":10,"destination":"Addo","days":2,"lng":25.688894,"lat":-33.558258},{"order":11,"destination":"Knysna","days":2,"lng":23.048079,"lat":-34.03538},{"order":12,"destination":"Swellendam","days":1,"lng":20.44437,"lat":-34.019894},{"order":13,"destination":"Hermanus","days":1,"lng":19.241768,"lat":-34.420567},{"order":14,"destination":"Kaapstad","days":2,"lng":18.420296,"lat":-33.922497}];
 
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/outdoors-v12',
-  center: [26.63666866666666, -29.632291666666674],
+  center: [26.552392357142857, -29.885585357142865],
   zoom: 4
 });
 
@@ -49,7 +49,7 @@ map.on('load', function() {
       type: 'Feature',
       geometry: {
         type: 'LineString',
-        coordinates: [[28.042114,-26.204678],[28.042114,-26.204678],[30.840658,-24.933699],[31.574825,-23.853079],[31.13396,-26.314901],[32.411842,-28.374832],[29.126863,-28.612917],[28.42062,-28.515364],[27.496523,-29.344175],[25.617104,-32.169456],[25.688894,-33.558258],[23.048079,-34.03538],[20.44437,-34.019894],[19.241768,-34.420567],[18.420296,-33.922497]]
+        coordinates: [[28.042114,-26.204678],[30.840658,-24.933699],[31.574825,-23.853079],[31.13396,-26.314901],[32.411842,-28.374832],[29.35244,-28.731415],[28.42062,-28.515364],[27.496523,-29.344175],[25.617104,-32.169456],[25.688894,-33.558258],[23.048079,-34.03538],[20.44437,-34.019894],[19.241768,-34.420567],[18.420296,-33.922497]]
       }
     }
   });

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Routekaart - rondje-ionische-eilanden</title>
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; }
+  #map { width: 100%; height: 60vh; min-height: 400px; }
+  #legenda { padding: 20px; background: white; }
+  #legenda h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; }
+  .legenda-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; color: #333; }
+  .legenda-item:last-child { border-bottom: none; }
+  .legenda-nr { background: #e74c3c; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .legenda-dagen { margin-left: auto; color: #888; font-size: 13px; }
+  .mapboxgl-popup-content { padding: 12px 16px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .popup-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .popup-dagen { color: #666; font-size: 13px; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="legenda">
+  <h3>Route</h3>
+  <div id="legenda-items"></div>
+</div>
+<script>
+mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
+
+const stops = [{"order":1,"destination":"Preveza","days":0,"lng":20.75357,"lat":38.957546},{"order":2,"destination":"Kylini","days":0,"lng":21.14574,"lat":37.935246},{"order":3,"destination":"Zakynthos","days":4,"lng":20.75,"lat":37.8},{"order":4,"destination":"Kefalonia","days":5,"lng":20.5525,"lat":38.265},{"order":5,"destination":"Lefkas","days":5,"lng":20.643889,"lat":38.717778}];
+
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/outdoors-v12',
+  center: [20.769139799999998, 38.335114],
+  zoom: 4
+});
+
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+map.on('load', function() {
+  // Routelijn
+  map.addSource('route', {
+    type: 'geojson',
+    data: {
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: [[20.75357,38.957546],[21.14574,37.935246],[20.75,37.8],[20.5525,38.265],[20.643889,38.717778]]
+      }
+    }
+  });
+
+  map.addLayer({
+    id: 'route-line',
+    type: 'line',
+    source: 'route',
+    layout: { 'line-join': 'round', 'line-cap': 'round' },
+    paint: { 'line-color': '#0066cc', 'line-width': 3, 'line-opacity': 0.8 }
+  });
+
+  // Markers + popups
+  stops.forEach(function(stop) {
+    const el = document.createElement('div');
+    const isTransit = stop.type === 'transit';
+    const isArrival = stop.type === 'arrival';
+    if (isTransit) {
+      el.style.cssText = 'width:10px;height:10px;background:#f39c12;border:2px solid white;border-radius:2px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.25);transform:rotate(45deg)';
+    } else if (isArrival) {
+      el.style.cssText = 'width:12px;height:12px;background:#27ae60;border:2px solid white;border-radius:50%;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.25)';
+    } else {
+      el.style.cssText = 'width:14px;height:14px;background:#e74c3c;border:2px solid white;border-radius:50%;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.3)';
+    }
+
+    const dagLabel = stop.type === 'transit' ? 'tussenstop' : stop.type === 'arrival' ? 'aankomst/vertrek' : stop.days === 1 ? '1 dag' : stop.days + ' dagen';
+
+    new mapboxgl.Marker(el)
+      .setLngLat([stop.lng, stop.lat])
+      .setPopup(new mapboxgl.Popup({ offset: 12 }).setHTML(
+        '<div class="popup-title">' + stop.destination + '</div>' +
+        '<div class="popup-dagen">' + dagLabel + '</div>'
+      ))
+      .addTo(map);
+  });
+
+  // Auto-fit bounds
+  const bounds = new mapboxgl.LngLatBounds();
+  stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });
+  map.fitBounds(bounds, { padding: 60 });
+});
+
+// Legenda
+const legendaEl = document.getElementById('legenda-items');
+stops.forEach(function(stop) {
+  const dagLabel = stop.days === 1 ? '1 dag' : stop.days + ' dagen';
+  const isTransitStop = stop.type === 'transit' || stop.type === 'arrival';
+  const nrStyle = isTransitStop
+    ? 'background:#f39c12;width:20px;height:20px;font-size:10px;'
+    : '';
+  const itemStyle = isTransitStop ? 'opacity:0.7;' : '';
+  legendaEl.innerHTML += '<div class="legenda-item" style="' + itemStyle + '">' +
+    '<div class="legenda-nr" style="' + nrStyle + '">' + stop.order + '</div>' +
+    '<span>' + stop.destination + '</span>' +
+    '<span class="legenda-dagen">' + dagLabel + '</span>' +
+    '</div>';
+});
+</script>
+</body>
+</html>

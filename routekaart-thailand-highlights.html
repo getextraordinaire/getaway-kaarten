@@ -30,12 +30,12 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Bangkok","days":3,"lng":100.493509,"lat":13.752494},{"order":2,"destination":"River Kwai","days":2,"lng":99.532317,"lat":14.022707},{"order":3,"destination":"Ayutthaya","days":0,"lng":100.566666,"lat":14.350473},{"order":4,"destination":"Chiang Mai","days":4,"lng":98.98588,"lat":18.788278},{"order":5,"destination":"Hua Hin","days":5,"lng":99.95714,"lat":12.570512}];
+const stops = [{"order":1,"destination":"Bangkok","days":3,"lng":100.493509,"lat":13.752494},{"order":2,"destination":"Damnoen Saduak","days":0,"lng":99.96767,"lat":13.530276},{"order":3,"destination":"River Kwai","days":2,"lng":99.532317,"lat":14.022707},{"order":4,"destination":"Ayutthaya","days":0,"lng":100.566666,"lat":14.350473},{"order":5,"destination":"Chiang Mai","days":3,"lng":98.98588,"lat":18.788278},{"order":6,"destination":"Hua Hin","days":4,"lng":99.95714,"lat":12.570512}];
 
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/outdoors-v12',
-  center: [99.9071024, 14.6968928],
+  center: [99.917197, 14.502456666666665],
   zoom: 4
 });
 
@@ -49,7 +49,7 @@ map.on('load', function() {
       type: 'Feature',
       geometry: {
         type: 'LineString',
-        coordinates: [[100.493509,13.752494],[99.532317,14.022707],[100.566666,14.350473],[98.98588,18.788278],[99.95714,12.570512]]
+        coordinates: [[100.493509,13.752494],[99.96767,13.530276],[99.532317,14.022707],[100.566666,14.350473],[98.98588,18.788278],[99.95714,12.570512]]
       }
     }
   });

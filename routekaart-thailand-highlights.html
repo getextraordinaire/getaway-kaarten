@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Routekaart - thailand-highlights</title>
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; }
+  #map { width: 100%; height: 65vh; min-height: 420px; }
+  #legenda { padding: 16px 20px; background: white; border-top: 1px solid #eee; }
+  #legenda h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: #1a1a1a; }
+  .legenda-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #333; }
+  .legenda-item:last-child { border-bottom: none; }
+  .legenda-nr { background: #e74c3c; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .legenda-dagen { margin-left: auto; color: #888; font-size: 12px; white-space: nowrap; }
+  .legenda-transport { font-size: 13px; margin-left: 2px; }
+  .mapboxgl-popup-content { padding: 10px 14px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  .popup-title { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+  .popup-dagen { color: #666; font-size: 12px; }
+  .popup-transport { font-size: 11px; color: #999; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="legenda">
+  <h3>Route</h3>
+  <div id="legenda-items"></div>
+</div>
+<script>
+mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
+
+const stops = [{"order":1,"destination":"Bangkok","days":3,"lng":100.493509,"lat":13.752494,"type":"destination","transport":"flight","day_label":""},{"order":2,"destination":"Damnoen Saduak","days":0,"lng":99.96767,"lat":13.530276,"type":"transit","transport":"car","day_label":""},{"order":3,"destination":"River Kwai","days":2,"lng":99.532317,"lat":14.022707,"type":"destination","transport":"car","day_label":""},{"order":4,"destination":"Ayutthaya","days":0,"lng":100.566666,"lat":14.350473,"type":"transit","transport":"car","day_label":""},{"order":5,"destination":"Chiang Mai","days":4,"lng":98.98588,"lat":18.788278,"type":"destination","transport":"train","day_label":""},{"order":6,"destination":"Hua Hin","days":4,"lng":99.95714,"lat":12.570512,"type":"destination","transport":"flight","day_label":""},{"order":7,"destination":"Bangkok","days":0,"lng":100.493509,"lat":13.752494,"type":"transit","transport":"car","day_label":""}];
+const segments = [{"from":[100.493509,13.752494],"to":[99.96767,13.530276],"transport":"car"},{"from":[99.96767,13.530276],"to":[99.532317,14.022707],"transport":"car"},{"from":[99.532317,14.022707],"to":[100.566666,14.350473],"transport":"car"},{"from":[100.566666,14.350473],"to":[98.98588,18.788278],"transport":"train"},{"from":[98.98588,18.788278],"to":[99.95714,12.570512],"transport":"flight"},{"from":[99.95714,12.570512],"to":[100.493509,13.752494],"transport":"car"}];
+
+// Vervoer configuratie
+const transportConfig = {
+  flight:  { color: '#8e44ad', dash: [2, 2], width: 2, label: 'Vlucht',      icon: '✈' },
+  ferry:   { color: '#2980b9', dash: [4, 2], width: 2, label: 'Ferry/boot',   icon: '⛵' },
+  train:   { color: '#27ae60', dash: [6, 2], width: 3, label: 'Trein',        icon: '🚂' },
+  cruise:  { color: '#16a085', dash: [8, 3], width: 3, label: 'Cruise',       icon: '🚢' },
+  walk:    { color: '#e67e22', dash: [2, 3], width: 2, label: 'Wandelen',     icon: '🥾' },
+  car:     { color: '#0066cc', dash: [],     width: 3, label: 'Auto',         icon: '🚗' },
+  unknown: { color: '#95a5a6', dash: [],     width: 2, label: '',             icon: '' }
+};
+
+// Functie voor boog-coördinaten tussen twee punten
+function boogCoords(from, to, transport, punten) {
+  punten = punten || 40;
+  var coords = [];
+  // Gebruik boog voor flight, ferry, cruise — rechte lijn voor de rest
+  var useBoog = (transport === 'flight' || transport === 'ferry' || transport === 'cruise');
+  if (!useBoog) {
+    return [from, to];
+  }
+  var dx = to[0] - from[0];
+  var dy = to[1] - from[1];
+  var dist = Math.sqrt(dx*dx + dy*dy);
+  // Hoogte van de boog: 15% van de afstand
+  var boogHoogte = dist * 0.20;
+  // Middelpunt + loodrechte offset
+  var mx = (from[0] + to[0]) / 2;
+  var my = (from[1] + to[1]) / 2;
+  // Loodrecht op de lijn
+  var nx = -dy / dist;
+  var ny = dx / dist;
+  var ctrl = [mx + nx * boogHoogte, my + ny * boogHoogte];
+  // Quadratische bezier
+  for (var i = 0; i <= punten; i++) {
+    var t = i / punten;
+    var x = (1-t)*(1-t)*from[0] + 2*(1-t)*t*ctrl[0] + t*t*to[0];
+    var y = (1-t)*(1-t)*from[1] + 2*(1-t)*t*ctrl[1] + t*t*to[1];
+    coords.push([x, y]);
+  }
+  return coords;
+}
+
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/outdoors-v12',
+  center: [99.9995272857143, 14.395319142857142],
+  zoom: 4
+});
+
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+// Fullscreen knop
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+
+map.on('load', function() {
+
+  // Teken elk segment apart met juiste stijl + boog
+  segments.forEach(function(seg, idx) {
+    var cfg = transportConfig[seg.transport] || transportConfig.unknown;
+    var coords = boogCoords(seg.from, seg.to, seg.transport);
+    var sourceId = 'route-' + idx;
+    var layerId = 'route-line-' + idx;
+
+    map.addSource(sourceId, {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        geometry: { type: 'LineString', coordinates: coords }
+      }
+    });
+
+    var paint = {
+      'line-color': cfg.color,
+      'line-width': cfg.width,
+      'line-opacity': 0.85
+    };
+    if (cfg.dash && cfg.dash.length > 0) {
+      paint['line-dasharray'] = cfg.dash;
+    }
+
+    map.addLayer({
+      id: layerId,
+      type: 'line',
+      source: sourceId,
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: paint
+    });
+
+    // Vervoer-icoon halverwege het segment
+    if (cfg.icon && cfg.icon !== '') {
+      var mid = coords[Math.floor(coords.length / 2)];
+      var iconEl = document.createElement('div');
+      iconEl.style.cssText = 'font-size:14px;cursor:default;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));user-select:none;';
+      iconEl.textContent = cfg.icon;
+      new mapboxgl.Marker({ element: iconEl, anchor: 'center' })
+        .setLngLat(mid)
+        .addTo(map);
+    }
+  });
+
+  // Markers per stop
+  stops.forEach(function(stop) {
+    var el = document.createElement('div');
+    var isTransit = stop.type === 'transit';
+    var isArrival = stop.type === 'arrival';
+    if (isTransit) {
+      el.style.cssText = 'width:10px;height:10px;background:#f39c12;border:2px solid white;border-radius:2px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.25);transform:rotate(45deg)';
+    } else if (isArrival) {
+      el.style.cssText = 'width:12px;height:12px;background:#27ae60;border:2px solid white;border-radius:50%;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.25)';
+    } else {
+      el.style.cssText = 'width:14px;height:14px;background:#e74c3c;border:2px solid white;border-radius:50%;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.3)';
+    }
+
+    var dagLabel = stop.day_label || (stop.type === 'transit' ? 'tussenstop' : stop.type === 'arrival' ? 'aankomst/vertrek' : '');
+    var cfg = transportConfig[stop.transport] || transportConfig.unknown;
+    var transportLabel = cfg.label ? (cfg.icon + ' ' + cfg.label) : '';
+
+    new mapboxgl.Marker(el)
+      .setLngLat([stop.lng, stop.lat])
+      .setPopup(new mapboxgl.Popup({ offset: 12 }).setHTML(
+        '<div class="popup-title">' + stop.destination + '</div>' +
+        '<div class="popup-dagen">' + dagLabel + '</div>' +
+        (transportLabel ? '<div class="popup-transport">' + transportLabel + '</div>' : '')
+      ))
+      .addTo(map);
+  });
+
+  // Auto-fit bounds
+  var bounds = new mapboxgl.LngLatBounds();
+  stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });
+  map.fitBounds(bounds, { padding: 60 });
+});
+
+// Legenda
+var legendaEl = document.getElementById('legenda-items');
+stops.forEach(function(stop) {
+  var dagLabel = stop.day_label || (stop.type === 'transit' ? 'tussenstop' : stop.type === 'arrival' ? 'aankomst/vertrek' : '');
+  var isTransitStop = stop.type === 'transit' || stop.type === 'arrival';
+  var nrStyle = isTransitStop ? 'background:#f39c12;width:18px;height:18px;font-size:9px;' : '';
+  var itemStyle = isTransitStop ? 'opacity:0.65;' : '';
+  var cfg = transportConfig[stop.transport] || transportConfig.unknown;
+  var transportSpan = (!isTransitStop && cfg.icon) ? '<span class="legenda-transport">' + cfg.icon + '</span>' : '';
+  legendaEl.innerHTML += '<div class="legenda-item" style="' + itemStyle + '">' +
+    '<div class="legenda-nr" style="' + nrStyle + '">' + stop.order + '</div>' +
+    transportSpan +
+    '<span>' + stop.destination + '</span>' +
+    '<span class="legenda-dagen">' + dagLabel + '</span>' +
+    '</div>';
+});
+</script>
+</body>
+</html>

@@ -32,8 +32,8 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Bangkok","days":3,"lng":100.493509,"lat":13.752494,"type":"destination","transport":"car"},{"order":2,"destination":"River Kwai","days":2,"lng":99.532317,"lat":14.022707,"type":"destination","transport":"car"},{"order":3,"destination":"Ayutthaya","days":0,"lng":100.566666,"lat":14.350473,"type":"destination","transport":"car"},{"order":4,"destination":"Chiang Mai","days":3,"lng":98.98588,"lat":18.788278,"type":"destination","transport":"car"},{"order":5,"destination":"Hua Hin","days":4,"lng":99.95714,"lat":12.570512,"type":"destination","transport":"car"}];
-const segments = [{"from":[100.493509,13.752494],"to":[99.532317,14.022707],"transport":"car"},{"from":[99.532317,14.022707],"to":[100.566666,14.350473],"transport":"car"},{"from":[100.566666,14.350473],"to":[98.98588,18.788278],"transport":"car"},{"from":[98.98588,18.788278],"to":[99.95714,12.570512],"transport":"car"}];
+const stops = [{"order":1,"destination":"Bangkok","days":3,"lng":100.493509,"lat":13.752494,"type":"destination","transport":"car"},{"order":2,"destination":"Damnoen Saduak","days":0,"lng":99.96767,"lat":13.530276,"type":"destination","transport":"car"},{"order":3,"destination":"River Kwai","days":2,"lng":99.532317,"lat":14.022707,"type":"destination","transport":"car"},{"order":4,"destination":"Ayutthaya","days":0,"lng":100.566666,"lat":14.350473,"type":"destination","transport":"car"},{"order":5,"destination":"Chiang Mai","days":3,"lng":98.98588,"lat":18.788278,"type":"destination","transport":"car"},{"order":6,"destination":"Hua Hin","days":4,"lng":99.95714,"lat":12.570512,"type":"destination","transport":"car"}];
+const segments = [{"from":[100.493509,13.752494],"to":[99.96767,13.530276],"transport":"car"},{"from":[99.96767,13.530276],"to":[99.532317,14.022707],"transport":"car"},{"from":[99.532317,14.022707],"to":[100.566666,14.350473],"transport":"car"},{"from":[100.566666,14.350473],"to":[98.98588,18.788278],"transport":"car"},{"from":[98.98588,18.788278],"to":[99.95714,12.570512],"transport":"car"}];
 
 // Vervoer configuratie
 const transportConfig = {
@@ -80,7 +80,7 @@ function boogCoords(from, to, transport, punten) {
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/outdoors-v12',
-  center: [99.9071024, 14.6968928],
+  center: [99.917197, 14.502456666666665],
   zoom: 4
 });
 

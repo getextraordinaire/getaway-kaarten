@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Routekaart - grand-tour-thailand-laos-en-cambodja</title>
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #F9FBFB; }
+  #map { width: 100%; height: 65vh; min-height: 420px; }
+  .land-label-marker { pointer-events: none; }
+  .stop-land { font-size: 15px; font-weight: 700; font-style: italic; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; text-shadow: 0 1px 2px rgba(40,48,56,0.78); }
+  #legenda { padding: 16px 20px; background: #F9FBFB; border-top: 1px solid #ABC6CB; }
+  #legenda h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: #3B4651; }
+  .legenda-uitleg { display: flex; gap: 16px; margin-bottom: 12px; font-size: 11px; color: #3B4651; flex-wrap: wrap; }
+  .legenda-uitleg span { display: inline-flex; align-items: center; gap: 5px; }
+  .mini-ring { width: 11px; height: 11px; border-radius: 50%; background: #F9FBFB; border: 2px solid #3B4651; display: inline-block; }
+  .legenda-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #B9D9E0; font-size: 13px; color: #3B4651; }
+  .legenda-item:last-child { border-bottom: none; }
+  .legenda-dag { color: #3B4651; font-size: 12px; font-weight: 600; min-width: 72px; flex-shrink: 0; }
+  .legenda-transport { display: inline-flex; align-items: center; margin-left: 2px; }
+  .mapboxgl-popup-content { padding: 10px 14px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 2px 8px rgba(59,70,81,0.2); background: #F9FBFB; }
+  .popup-title { font-weight: 600; font-size: 13px; margin-bottom: 3px; color: #3B4651; }
+  .popup-dagen { color: #3B4651; font-size: 12px; }
+  .popup-transport { font-size: 11px; color: #3B4651; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="legenda">
+  <h3>Route</h3>
+  <div class="legenda-uitleg">
+    <span><span class="mini-ring"></span> Start- en eindpunt</span>
+  </div>
+  <div id="legenda-items"></div>
+</div>
+<script>
+mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
+
+const stops = [{"order":1,"destination":"Bangkok","country":"Thailand","toonLand":"Thailand","days":3,"lng":100.493509,"lat":13.752494,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1-3","isStart":true,"isEind":false},{"order":2,"destination":"Damnoen Saduak","country":"Thailand","toonLand":"","days":0,"lng":99.96767,"lat":13.530276,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":3,"destination":"Nakhon Pathom","country":"Thailand","toonLand":"","days":0,"lng":100.063992,"lat":13.819007,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":4,"destination":"River Kwai","country":"Thailand","toonLand":"","days":1,"lng":99.532317,"lat":14.022707,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 4-5","isStart":false,"isEind":false},{"order":5,"destination":"Ayutthaya","country":"Thailand","toonLand":"","days":1,"lng":100.566666,"lat":14.350473,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 5-6","isStart":false,"isEind":false},{"order":6,"destination":"Chiang Mai","country":"Thailand","toonLand":"","days":2,"lng":98.98588,"lat":18.788278,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 6-8","isStart":false,"isEind":false},{"order":7,"destination":"Luang Prabang","country":"Laos","toonLand":"Laos","days":2,"lng":102.135898,"lat":19.888744,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 8-10","isStart":false,"isEind":false},{"order":8,"destination":"Vang Vieng","country":"Laos","toonLand":"","days":1,"lng":102.44764,"lat":18.926098,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 10-11","isStart":false,"isEind":false},{"order":9,"destination":"Vientiane","country":"Laos","toonLand":"","days":1,"lng":102.613371,"lat":17.964099,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 11-12","isStart":false,"isEind":false},{"order":10,"destination":"Phnom Penh","country":"Cambodia","toonLand":"Cambodja","days":2,"lng":104.922443,"lat":11.568271,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 12-14","isStart":false,"isEind":false},{"order":11,"destination":"Siem Reap","country":"Cambodia","toonLand":"","days":3,"lng":103.85486,"lat":13.354503,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 14-17","isStart":false,"isEind":false},{"order":12,"destination":"Hua Hin","country":"Thailand","toonLand":"","days":3,"lng":99.95714,"lat":12.570512,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 17-20","isStart":false,"isEind":false},{"order":13,"destination":"Bangkok","country":"Thailand","toonLand":"","days":0,"lng":100.493509,"lat":13.752494,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 20","isStart":false,"isEind":true}];
+const segments = [{"from":[100.493509,13.752494],"to":[99.96767,13.530276],"transport":"car"},{"from":[99.96767,13.530276],"to":[100.063992,13.819007],"transport":"car"},{"from":[100.063992,13.819007],"to":[99.532317,14.022707],"transport":"car"},{"from":[99.532317,14.022707],"to":[100.566666,14.350473],"transport":"car"},{"from":[100.566666,14.350473],"to":[98.98588,18.788278],"transport":"train"},{"from":[98.98588,18.788278],"to":[102.135898,19.888744],"transport":"flight"},{"from":[102.135898,19.888744],"to":[102.44764,18.926098],"transport":"train"},{"from":[102.44764,18.926098],"to":[102.613371,17.964099],"transport":"car"},{"from":[102.613371,17.964099],"to":[104.922443,11.568271],"transport":"flight"},{"from":[104.922443,11.568271],"to":[103.85486,13.354503],"transport":"car"},{"from":[103.85486,13.354503],"to":[99.95714,12.570512],"transport":"flight"},{"from":[99.95714,12.570512],"to":[100.493509,13.752494],"transport":"car"}];
+const tripCountries = ["TH","LA","KH"];
+
+const KLEUR_LICHT = '#F9FBFB';
+const KLEUR_BLAUW = '#B9D9E0';
+const KLEUR_DONKER = '#3B4651';
+const KLEUR_GRIJS = '#ABC6CB';
+
+const transportConfig = {
+  flight:  { dash: [2, 2], width: 2, label: 'Vlucht',     svg: 'M21,16v-2l-8-5V3.5C13,2.67,12.33,2,11.5,2S10,2.67,10,3.5V9l-8,5v2l8-2.5V19l-2,1.5V22l3.5-1l3.5,1v-1.5L13,19v-5.5L21,16z' },
+  ferry:   { dash: [4, 2], width: 2, label: 'Ferry/boot', svg: 'M20,21c-1.39,0-2.78-0.47-4-1.32c-2.44,1.71-5.56,1.71-8,0C6.78,20.53,5.39,21,4,21H2v2h2c1.38,0,2.74-0.35,4-0.99c2.52,1.29,5.48,1.29,8,0c1.26,0.65,2.62,0.99,4,0.99h2v-2H20z M3.95,19H4c1.6,0,3.02-0.88,4-2c0.98,1.12,2.4,2,4,2s3.02-0.88,4-2c0.98,1.12,2.4,2,4,2h0.05l1.89-6.68c0.08-0.26,0.06-0.54-0.06-0.78s-0.34-0.42-0.6-0.5L20,10.62V6c0-1.1-0.9-2-2-2h-3V1H9v3H6C4.9,4,4,4.9,4,6v4.62l-1.29,0.42c-0.26,0.08-0.48,0.26-0.6,0.5s-0.15,0.52-0.06,0.78L3.95,19z M6,6h12v3.97L12,8L6,9.97V6z' },
+  train:   { dash: [6, 2], width: 3, label: 'Trein',      svg: 'M12,2c-4.42,0-8,0.5-8,4v9.5C4,17.43,5.57,19,7.5,19L6,20.5V21h12v-0.5L16.5,19c1.93,0,3.5-1.57,3.5-3.5V6C20,2.5,16.42,2,12,2z M7.5,17C6.67,17,6,16.33,6,15.5S6.67,14,7.5,14S9,14.67,9,15.5S8.33,17,7.5,17z M11,11H6V6h5V11z M16.5,17c-0.83,0-1.5-0.67-1.5-1.5s0.67-1.5,1.5-1.5s1.5,0.67,1.5,1.5S17.33,17,16.5,17z M18,11h-5V6h5V11z' },
+  cruise:  { dash: [8, 3], width: 3, label: 'Cruise',     svg: 'M20,21c-1.39,0-2.78-0.47-4-1.32c-2.44,1.71-5.56,1.71-8,0C6.78,20.53,5.39,21,4,21H2v2h2c1.38,0,2.74-0.35,4-0.99c2.52,1.29,5.48,1.29,8,0c1.26,0.65,2.62,0.99,4,0.99h2v-2H20z M3.95,19H4c1.6,0,3.02-0.88,4-2c0.98,1.12,2.4,2,4,2s3.02-0.88,4-2c0.98,1.12,2.4,2,4,2h0.05l1.89-6.68c0.08-0.26,0.06-0.54-0.06-0.78s-0.34-0.42-0.6-0.5L20,10.62V6c0-1.1-0.9-2-2-2h-3V1H9v3H6C4.9,4,4,4.9,4,6v4.62l-1.29,0.42c-0.26,0.08-0.48,0.26-0.6,0.5s-0.15,0.52-0.06,0.78L3.95,19z M6,6h12v3.97L12,8L6,9.97V6z' },
+  walk:    { dash: [2, 3], width: 2, label: 'Wandelen',   svg: 'M13.5,5.5c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2S12.4,5.5,13.5,5.5z M9.8,8.9L7,23h2.1l1.8-8l2.1,2v6h2v-7.5l-2.1-2l0.6-3C12.8,11,14.8,12,17,12v-2c-1.9,0-3.5-1-4.3-2.4l-1-1.6C11.3,5.4,10.7,5,10,5C9.7,5,9.5,5.1,9.2,5.1L4,7.3V13h2V8.6l1.8-0.7' },
+  car:     { dash: [],     width: 3, label: 'Auto',       svg: '' },
+  unknown: { dash: [],     width: 2, label: '',           svg: '' }
+};
+
+function svgIcon(pad, maat) {
+  if (!pad) return '';
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + maat + '" height="' + maat + '" viewBox="0 0 24 24" fill="' + KLEUR_DONKER + '"><path d="' + pad + '"/></svg>';
+}
+
+function boogCoords(from, to, transport, punten) {
+  punten = punten || 40;
+  var useBoog = (transport === 'flight' || transport === 'ferry' || transport === 'cruise');
+  if (!useBoog) {
+    // rechte lijn, maar verdicht tot meerdere punten zodat het midden-punt (voor het transport-icoon) echt in het midden ligt en niet op een stop
+    var rechte = [];
+    for (var k = 0; k <= punten; k++) {
+      var tt = k / punten;
+      rechte.push([from[0] + (to[0] - from[0]) * tt, from[1] + (to[1] - from[1]) * tt]);
+    }
+    return rechte;
+  }
+  var dx = to[0] - from[0]; var dy = to[1] - from[1];
+  var dist = Math.sqrt(dx*dx + dy*dy);
+  var boogHoogte = dist * 0.20;
+  var mx = (from[0] + to[0]) / 2; var my = (from[1] + to[1]) / 2;
+  var nx = -dy / dist; var ny = dx / dist;
+  var ctrl = [mx + nx * boogHoogte, my + ny * boogHoogte];
+  var coords = [];
+  for (var i = 0; i <= punten; i++) {
+    var t = i / punten;
+    var x = (1-t)*(1-t)*from[0] + 2*(1-t)*t*ctrl[0] + t*t*to[0];
+    var y = (1-t)*(1-t)*from[1] + 2*(1-t)*t*ctrl[1] + t*t*to[1];
+    coords.push([x, y]);
+  }
+  return coords;
+}
+
+const landenFilter = ['all',
+  ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]],
+  ['in', ['get', 'iso_3166_1'], ['literal', tripCountries]]
+];
+
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf',
+    sources: { landen: { type: 'vector', url: 'mapbox://mapbox.country-boundaries-v1' } },
+    layers: [
+      { id: 'achtergrond', type: 'background', paint: { 'background-color': KLEUR_LICHT } },
+      { id: 'reisland-vlak', type: 'fill', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'fill-color': KLEUR_BLAUW } },
+      { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
+    ]
+  },
+  center: [101.23345346153846, 15.099073538461539],
+  zoom: 4
+});
+
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+
+map.on('load', function() {
+
+  segments.forEach(function(seg, idx) {
+    var cfg = transportConfig[seg.transport] || transportConfig.unknown;
+    var coords = boogCoords(seg.from, seg.to, seg.transport);
+    var sourceId = 'route-' + idx; var layerId = 'route-line-' + idx;
+    map.addSource(sourceId, { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords } } });
+    var paint = { 'line-color': KLEUR_DONKER, 'line-width': cfg.width, 'line-opacity': 0.9 };
+    if (cfg.dash && cfg.dash.length > 0) { paint['line-dasharray'] = cfg.dash; }
+    map.addLayer({ id: layerId, type: 'line', source: sourceId, layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: paint });
+
+    if (cfg.svg) {
+      var iconPos = coords[Math.floor(coords.length * 0.5)];
+      var iconEl = document.createElement('div');
+      iconEl.style.cssText = 'cursor:default;user-select:none;line-height:0;';
+      iconEl.innerHTML = svgIcon(cfg.svg, 16);
+      new mapboxgl.Marker({ element: iconEl, anchor: 'center' }).setLngLat(iconPos).addTo(map);
+    }
+  });
+
+  var perLocatie = {};
+  stops.forEach(function(stop) {
+    var key = stop.lng.toFixed(5) + ',' + stop.lat.toFixed(5);
+    if (!perLocatie[key]) perLocatie[key] = [];
+    perLocatie[key].push(stop);
+  });
+
+  var dotFeatures = [];
+  var plaatsFeatures = [];
+  var landData = [];
+
+  Object.keys(perLocatie).forEach(function(key) {
+    var groep = perLocatie[key];
+    var stop = groep.find(function(s) { return s.type === 'destination'; }) || groep[0];
+    var toonLand = '';
+    groep.forEach(function(s) { if (s.toonLand && !toonLand) toonLand = s.toonLand; });
+    var isStart = groep.some(function(s){ return s.isStart; });
+    var isEind = groep.some(function(s){ return s.isEind; });
+    var isEindpunt = isStart || isEind;
+    var labels = [];
+    groep.forEach(function(s) {
+      var l = s.day_label || (s.type === 'transit' ? 'tussenstop' : s.type === 'arrival' ? 'aankomst/vertrek' : '');
+      if (l && labels.indexOf(l) === -1) labels.push(l);
+    });
+    var dagLabel = labels.join(' \u00b7 ');
+    var cfg = transportConfig[stop.transport] || transportConfig.unknown;
+    var transportLabel = cfg.label ? (svgIcon(cfg.svg, 12) + ' ' + cfg.label) : '';
+
+    dotFeatures.push({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [stop.lng, stop.lat] },
+      properties: { isEindpunt: isEindpunt, destination: stop.destination, dagLabel: dagLabel, transportLabel: transportLabel }
+    });
+
+    var bekendheid = groep.reduce(function(m, s){ return Math.max(m, s.bekendheid || 1); }, 1);
+    var bijzonderVervoer = groep.some(function(s){ return ['flight','train','ferry','cruise'].indexOf(s.transport) !== -1; });
+    var sortKey;
+    if (isEindpunt) { sortKey = 0; }
+    else if (bijzonderVervoer) { sortKey = 10 - bekendheid; }
+    else { sortKey = 20 - bekendheid; }
+
+    plaatsFeatures.push({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [stop.lng, stop.lat] },
+      properties: { naam: stop.destination, sortKey: sortKey }
+    });
+
+    if (toonLand) {
+      landData.push({ lng: stop.lng, lat: stop.lat, toonLand: toonLand });
+    }
+  });
+
+  map.addSource('stops-dots', { type: 'geojson', data: { type: 'FeatureCollection', features: dotFeatures } });
+  map.addLayer({
+    id: 'stops-dots-layer',
+    type: 'circle',
+    source: 'stops-dots',
+    paint: {
+      'circle-radius': 7,
+      'circle-color': ['case', ['get', 'isEindpunt'], KLEUR_LICHT, KLEUR_DONKER],
+      'circle-stroke-color': ['case', ['get', 'isEindpunt'], KLEUR_DONKER, KLEUR_LICHT],
+      'circle-stroke-width': ['case', ['get', 'isEindpunt'], 3, 2]
+    }
+  });
+
+  map.addSource('plaatsnamen', { type: 'geojson', data: { type: 'FeatureCollection', features: plaatsFeatures } });
+  map.addLayer({
+    id: 'plaatsnamen-layer',
+    type: 'symbol',
+    source: 'plaatsnamen',
+    layout: {
+      'text-field': ['get', 'naam'],
+      'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+      'text-size': 13,
+      'text-anchor': 'bottom',
+      'text-offset': [0, -1.1],
+      'text-allow-overlap': false,
+      'text-ignore-placement': false,
+      'symbol-sort-key': ['get', 'sortKey']
+    },
+    paint: {
+      'text-color': KLEUR_DONKER,
+      'text-halo-color': KLEUR_LICHT,
+      'text-halo-width': 1.6
+    }
+  });
+
+  map.on('click', 'stops-dots-layer', function(e) {
+    var f = e.features[0];
+    var p = f.properties;
+    new mapboxgl.Popup({ offset: 12 })
+      .setLngLat(f.geometry.coordinates)
+      .setHTML('<div class="popup-title">' + p.destination + '</div><div class="popup-dagen">' + (p.dagLabel || '') + '</div>' + (p.transportLabel ? '<div class="popup-transport">' + p.transportLabel + '</div>' : ''))
+      .addTo(map);
+  });
+  map.on('mouseenter', 'stops-dots-layer', function() { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', 'stops-dots-layer', function() { map.getCanvas().style.cursor = ''; });
+
+  landData.forEach(function(d) {
+    var lab = document.createElement('div');
+    lab.className = 'land-label-marker';
+    lab.innerHTML = '<div class="stop-land">' + d.toonLand + '</div>';
+    var m = new mapboxgl.Marker({ element: lab, anchor: 'bottom', offset: [0, -30] }).setLngLat([d.lng, d.lat]).addTo(map);
+    m.getElement().style.zIndex = 1000;
+  });
+
+  var bounds = new mapboxgl.LngLatBounds();
+  stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });
+  map.fitBounds(bounds, { padding: 70 });
+});
+
+var legendaEl = document.getElementById('legenda-items');
+stops.forEach(function(stop) {
+  var dagLabel = stop.day_label || (stop.type === 'transit' ? 'tussenstop' : stop.type === 'arrival' ? 'aankomst/vertrek' : '');
+  var isTransitStop = stop.type === 'transit' || stop.type === 'arrival';
+  var itemStyle = isTransitStop ? 'opacity:0.65;' : '';
+  var cfg = transportConfig[stop.transport] || transportConfig.unknown;
+  var transportSpan = (!isTransitStop && cfg.svg) ? '<span class="legenda-transport">' + svgIcon(cfg.svg, 14) + '</span>' : '';
+  legendaEl.innerHTML += '<div class="legenda-item" style="' + itemStyle + '"><span class="legenda-dag">' + dagLabel + '</span>' + transportSpan + '<span>' + stop.destination + '</span></div>';
+});
+</script>
+</body>
+</html>

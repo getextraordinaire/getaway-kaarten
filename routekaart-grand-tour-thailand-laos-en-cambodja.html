@@ -39,7 +39,7 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Bangkok","country":"Thailand","toonLand":"Thailand","days":3,"lng":100.493509,"lat":13.752494,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1-3","isStart":true,"isEind":false},{"order":2,"destination":"Damnoen Saduak","country":"Thailand","toonLand":"","days":0,"lng":99.96767,"lat":13.530276,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":3,"destination":"Nakhon Pathom","country":"Thailand","toonLand":"","days":0,"lng":100.063992,"lat":13.819007,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":4,"destination":"River Kwai","country":"Thailand","toonLand":"","days":1,"lng":99.532317,"lat":14.022707,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 4-5","isStart":false,"isEind":false},{"order":5,"destination":"Ayutthaya","country":"Thailand","toonLand":"","days":1,"lng":100.566666,"lat":14.350473,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 5-6","isStart":false,"isEind":false},{"order":6,"destination":"Chiang Mai","country":"Thailand","toonLand":"","days":2,"lng":98.98588,"lat":18.788278,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 6-8","isStart":false,"isEind":false},{"order":7,"destination":"Luang Prabang","country":"Laos","toonLand":"Laos","days":2,"lng":102.135898,"lat":19.888744,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 8-10","isStart":false,"isEind":false},{"order":8,"destination":"Vang Vieng","country":"Laos","toonLand":"","days":1,"lng":102.44764,"lat":18.926098,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 10-11","isStart":false,"isEind":false},{"order":9,"destination":"Vientiane","country":"Laos","toonLand":"","days":1,"lng":102.613371,"lat":17.964099,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 11-12","isStart":false,"isEind":false},{"order":10,"destination":"Phnom Penh","country":"Cambodia","toonLand":"Cambodja","days":2,"lng":104.922443,"lat":11.568271,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 12-14","isStart":false,"isEind":false},{"order":11,"destination":"Siem Reap","country":"Cambodia","toonLand":"","days":3,"lng":103.85486,"lat":13.354503,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 14-17","isStart":false,"isEind":false},{"order":12,"destination":"Hua Hin","country":"Thailand","toonLand":"","days":3,"lng":99.95714,"lat":12.570512,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 17-19","isStart":false,"isEind":false},{"order":13,"destination":"Bangkok","country":"Thailand","toonLand":"","days":0,"lng":100.493509,"lat":13.752494,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 20","isStart":false,"isEind":true}];
+const stops = [{"order":1,"destination":"Bangkok","country":"Thailand","toonLand":"Thailand","days":3,"lng":100.493509,"lat":13.752494,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1-3","isStart":true,"isEind":false},{"order":2,"destination":"Damnoen Saduak","country":"Thailand","toonLand":"","days":0,"lng":99.96767,"lat":13.530276,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":3,"destination":"Nakhon Pathom","country":"Thailand","toonLand":"","days":0,"lng":100.063992,"lat":13.819007,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":4,"destination":"River Kwai","country":"Thailand","toonLand":"","days":1,"lng":99.532317,"lat":14.022707,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 4-5","isStart":false,"isEind":false},{"order":5,"destination":"Ayutthaya","country":"Thailand","toonLand":"","days":1,"lng":100.566666,"lat":14.350473,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 5-6","isStart":false,"isEind":false},{"order":6,"destination":"Chiang Mai","country":"Thailand","toonLand":"","days":1,"lng":98.98588,"lat":18.788278,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 6-7","isStart":false,"isEind":false},{"order":7,"destination":"Luang Prabang","country":"Laos","toonLand":"Laos","days":2,"lng":102.135898,"lat":19.888744,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 8-9","isStart":false,"isEind":false},{"order":8,"destination":"Vang Vieng","country":"Laos","toonLand":"","days":1,"lng":102.44764,"lat":18.926098,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 10","isStart":false,"isEind":false},{"order":9,"destination":"Vientiane","country":"Laos","toonLand":"","days":1,"lng":102.613371,"lat":17.964099,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 11","isStart":false,"isEind":false},{"order":10,"destination":"Phnom Penh","country":"Cambodia","toonLand":"Cambodja","days":2,"lng":104.922443,"lat":11.568271,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 12-13","isStart":false,"isEind":false},{"order":11,"destination":"Siem Reap","country":"Cambodia","toonLand":"","days":3,"lng":103.85486,"lat":13.354503,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 14-16","isStart":false,"isEind":false},{"order":12,"destination":"Hua Hin","country":"Thailand","toonLand":"","days":3,"lng":99.95714,"lat":12.570512,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 17-19","isStart":false,"isEind":false},{"order":13,"destination":"Bangkok","country":"Thailand","toonLand":"","days":0,"lng":100.493509,"lat":13.752494,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 20","isStart":false,"isEind":true}];
 const segments = [{"from":[100.493509,13.752494],"to":[99.96767,13.530276],"transport":"car"},{"from":[99.96767,13.530276],"to":[100.063992,13.819007],"transport":"car"},{"from":[100.063992,13.819007],"to":[99.532317,14.022707],"transport":"car"},{"from":[99.532317,14.022707],"to":[100.566666,14.350473],"transport":"car"},{"from":[100.566666,14.350473],"to":[98.98588,18.788278],"transport":"train"},{"from":[98.98588,18.788278],"to":[102.135898,19.888744],"transport":"flight"},{"from":[102.135898,19.888744],"to":[102.44764,18.926098],"transport":"train"},{"from":[102.44764,18.926098],"to":[102.613371,17.964099],"transport":"car"},{"from":[102.613371,17.964099],"to":[104.922443,11.568271],"transport":"flight"},{"from":[104.922443,11.568271],"to":[103.85486,13.354503],"transport":"car"},{"from":[103.85486,13.354503],"to":[99.95714,12.570512],"transport":"flight"},{"from":[99.95714,12.570512],"to":[100.493509,13.752494],"transport":"car"}];
 const tripCountries = ["TH","LA","KH"];
 
@@ -366,12 +366,15 @@ map.on('load', function() {
 
   function ververseTransportIconen() {
     var obstakels = [];
+    var zichtbareCoords = {};
     try {
+      // alleen daadwerkelijk zichtbare (niet-weggevallen) bestemmingsnamen tellen mee
       var namen = map.queryRenderedFeatures({ layers: ['plaatsnamen-layer'] });
       namen.forEach(function(f) {
         if (f.geometry && f.geometry.coordinates) {
           var p = map.project(f.geometry.coordinates);
           obstakels.push({ x: p.x, y: p.y - 16 });
+          zichtbareCoords[f.geometry.coordinates[0].toFixed(5) + ',' + f.geometry.coordinates[1].toFixed(5)] = true;
         }
       });
     } catch (e) {}
@@ -391,20 +394,9 @@ map.on('load', function() {
       tm.el.style.display = botst ? 'none' : '';
     });
 
-    // autopijltje: verberg als een marker-rondje te dicht bij het pijltje ligt (komt terug bij inzoomen)
-    var DREMPEL_PIJL = 16;
-    pijlMarkers.forEach(function(pm) {
-      var pp = map.project(pm.lngLat);
-      var dichtbij = dotFeatures.some(function(f) {
-        var dp = map.project(f.geometry.coordinates);
-        var dx = pp.x - dp.x, dy = pp.y - dp.y;
-        return Math.sqrt(dx * dx + dy * dy) < DREMPEL_PIJL;
-      });
-      pm.el.style.display = dichtbij ? 'none' : '';
-    });
-
-    // bestemmingsnaam verbergen als zijn tekst over een ANDER rondje valt (komt terug bij inzoomen)
+    // bestemmingsnaam verbergen als zijn tekst over een ANDER rondje valt; verzamel zichtbare naam-vlakken
     var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
+    var naamBoxen = [];
     plaatsFeatures.forEach(function(pf, idx) {
       var sp = map.project(pf.geometry.coordinates);
       var off = pf.properties.offset || [0, 0];
@@ -416,10 +408,27 @@ map.on('load', function() {
       var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
       var x1 = x0 + w, y1 = y0 + h;
       var raakt = markerPx.some(function(mp, j) {
-        if (j === idx) return false;
+        if (j === idx) return false; // eigen rondje overslaan
         return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
+      var key = pf.geometry.coordinates[0].toFixed(5) + ',' + pf.geometry.coordinates[1].toFixed(5);
+      if (!raakt && zichtbareCoords[key]) naamBoxen.push([x0, y0, x1, y1]);
+    });
+
+    // autopijltje: verberg als een marker-rondje te dicht ligt OF als het onder een zichtbare naam valt (komt terug bij inzoomen)
+    var DREMPEL_PIJL = 16;
+    pijlMarkers.forEach(function(pm) {
+      var pp = map.project(pm.lngLat);
+      var dichtbijDot = dotFeatures.some(function(f) {
+        var dp = map.project(f.geometry.coordinates);
+        var dx = pp.x - dp.x, dy = pp.y - dp.y;
+        return Math.sqrt(dx * dx + dy * dy) < DREMPEL_PIJL;
+      });
+      var onderNaam = naamBoxen.some(function(b) {
+        return pp.x > b[0] - 2 && pp.x < b[2] + 2 && pp.y > b[1] - 2 && pp.y < b[3] + 2;
+      });
+      pm.el.style.display = (dichtbijDot || onderNaam) ? 'none' : '';
     });
   }
   map.on('idle', ververseTransportIconen);

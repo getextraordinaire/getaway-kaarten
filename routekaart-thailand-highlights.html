@@ -319,20 +319,8 @@ map.on('load', function() {
     }
   });
 
-  // onzichtbare obstakels op de markers: plaatsnamen botsen nu ook met andere rondjes (niet enkel met andere namen).
-  // Een naam die op een ander rondje zou vallen, wijkt/verdwijnt bij uitzoomen en komt terug bij inzoomen.
-  if (!map.hasImage('marker-obstakel')) {
-    map.addImage('marker-obstakel', { width: 9, height: 9, data: new Uint8Array(9 * 9 * 4) });
-  }
-  map.addLayer({
-    id: 'marker-obstakels',
-    type: 'symbol',
-    source: 'stops-dots',
-    layout: { 'icon-image': 'marker-obstakel', 'icon-size': 1, 'icon-allow-overlap': true, 'icon-ignore-placement': false },
-    paint: { 'icon-opacity': 0 }
-  });
-
-  map.addSource('plaatsnamen', { type: 'geojson', data: { type: 'FeatureCollection', features: plaatsFeatures } });
+  // 3. BESTEMMINGSNAMEN als symbol-layer MET botsingdetectie (NA de rondjes -> altijd erboven)
+  map.addSource('plaatsnamen', { type: 'geojson', generateId: true, data: { type: 'FeatureCollection', features: plaatsFeatures } });
   map.addLayer({
     id: 'plaatsnamen-layer',
     type: 'symbol',
@@ -350,7 +338,8 @@ map.on('load', function() {
     paint: {
       'text-color': KLEUR_DONKER,
       'text-halo-color': KLEUR_LICHT,
-      'text-halo-width': 2.2
+      'text-halo-width': 2.2,
+      'text-opacity': ['case', ['boolean', ['feature-state', 'verborgen'], false], 0, 1]
     }
   });
 
@@ -412,6 +401,25 @@ map.on('load', function() {
         return Math.sqrt(dx * dx + dy * dy) < DREMPEL_PIJL;
       });
       pm.el.style.display = dichtbij ? 'none' : '';
+    });
+
+    // bestemmingsnaam verbergen als zijn tekst over een ANDER rondje valt (komt terug bij inzoomen)
+    var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
+    plaatsFeatures.forEach(function(pf, idx) {
+      var sp = map.project(pf.geometry.coordinates);
+      var off = pf.properties.offset || [0, 0];
+      var anchor = pf.properties.anchor || 'bottom';
+      var naam = pf.properties.naam || '';
+      var w = naam.length * 7.2, h = 15;
+      var ox = sp.x + off[0] * 13, oy = sp.y + off[1] * 13;
+      var x0 = anchor.indexOf('left') >= 0 ? ox : anchor.indexOf('right') >= 0 ? ox - w : ox - w / 2;
+      var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
+      var x1 = x0 + w, y1 = y0 + h;
+      var raakt = markerPx.some(function(mp, j) {
+        if (j === idx) return false;
+        return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+      });
+      map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
     });
   }
   map.on('idle', ververseTransportIconen);

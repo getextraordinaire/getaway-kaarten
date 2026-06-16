@@ -39,7 +39,7 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Preveza","country":"Greece","toonLand":"Griekenland","days":0,"lng":20.75357,"lat":38.957546,"type":"arrival","transport":"flight","bekendheid":1,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Kylini","country":"Greece","toonLand":"","days":0,"lng":21.14574,"lat":37.935246,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 1","isStart":false,"isEind":false},{"order":3,"destination":"Zakynthos","country":"Greece","toonLand":"","days":4,"lng":20.75,"lat":37.8,"type":"destination","transport":"ferry","bekendheid":3,"day_label":"Dag 1-4","isStart":false,"isEind":false},{"order":4,"destination":"Kefalonia","country":"Greece","toonLand":"","days":5,"lng":20.5525,"lat":38.265,"type":"destination","transport":"ferry","bekendheid":3,"day_label":"Dag 5-9","isStart":false,"isEind":false},{"order":5,"destination":"Lefkas","country":"Greece","toonLand":"","days":5,"lng":20.643889,"lat":38.717778,"type":"destination","transport":"ferry","bekendheid":2,"day_label":"Dag 10-14","isStart":false,"isEind":false},{"order":6,"destination":"Preveza","country":"Greece","toonLand":"","days":0,"lng":20.75357,"lat":38.957546,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 15","isStart":false,"isEind":true}];
+const stops = [{"order":1,"destination":"Preveza","country":"Greece","toonLand":"Griekenland","days":0,"lng":20.75357,"lat":38.957546,"type":"arrival","transport":"flight","bekendheid":1,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Kylini","country":"Greece","toonLand":"","days":0,"lng":21.14574,"lat":37.935246,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 1","isStart":false,"isEind":false},{"order":3,"destination":"Zakynthos","country":"Greece","toonLand":"","days":4,"lng":20.75,"lat":37.8,"type":"destination","transport":"ferry","bekendheid":3,"day_label":"Dag 1-4","isStart":false,"isEind":false},{"order":4,"destination":"Kefalonia","country":"Greece","toonLand":"","days":5,"lng":20.5525,"lat":38.265,"type":"destination","transport":"ferry","bekendheid":2,"day_label":"Dag 5-9","isStart":false,"isEind":false},{"order":5,"destination":"Lefkas","country":"Greece","toonLand":"","days":5,"lng":20.643889,"lat":38.717778,"type":"destination","transport":"ferry","bekendheid":2,"day_label":"Dag 10-14","isStart":false,"isEind":false},{"order":6,"destination":"Preveza","country":"Greece","toonLand":"","days":0,"lng":20.75357,"lat":38.957546,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 15","isStart":false,"isEind":true}];
 const segments = [{"from":[20.75357,38.957546],"to":[21.14574,37.935246],"transport":"car"},{"from":[21.14574,37.935246],"to":[20.75,37.8],"transport":"ferry"},{"from":[20.75,37.8],"to":[20.5525,38.265],"transport":"ferry"},{"from":[20.5525,38.265],"to":[20.643889,38.717778],"transport":"ferry"},{"from":[20.643889,38.717778],"to":[20.75357,38.957546],"transport":"car"}];
 const tripCountries = ["GR"];
 
@@ -194,17 +194,17 @@ map.on('load', function() {
   }
 
   var KANDIDATEN = [
-    { dir: [1, 0],   anchor: 'left',         off: [1.15, 0] },
-    { dir: [-1, 0],  anchor: 'right',        off: [-1.15, 0] },
-    { dir: [0, 1],   anchor: 'bottom',       off: [0, -1.15] },
-    { dir: [0, -1],  anchor: 'top',          off: [0, 1.15] },
-    { dir: [0.7071, 0.7071],   anchor: 'bottom-left',  off: [0.85, -0.85] },
-    { dir: [-0.7071, 0.7071],  anchor: 'bottom-right', off: [-0.85, -0.85] },
-    { dir: [0.7071, -0.7071],  anchor: 'top-left',     off: [0.85, 0.85] },
-    { dir: [-0.7071, -0.7071], anchor: 'top-right',    off: [-0.85, 0.85] }
+    { dir: [1, 0],   anchor: 'left',         off: [0.75, 0] },
+    { dir: [-1, 0],  anchor: 'right',        off: [-0.75, 0] },
+    { dir: [0, 1],   anchor: 'bottom',       off: [0, -0.75] },
+    { dir: [0, -1],  anchor: 'top',          off: [0, 0.75] },
+    { dir: [0.7071, 0.7071],   anchor: 'bottom-left',  off: [0.55, -0.55] },
+    { dir: [-0.7071, 0.7071],  anchor: 'bottom-right', off: [-0.55, -0.55] },
+    { dir: [0.7071, -0.7071],  anchor: 'top-left',     off: [0.55, 0.55] },
+    { dir: [-0.7071, -0.7071], anchor: 'top-right',    off: [-0.55, 0.55] }
   ];
   function kiesPlaatsing(vectoren) {
-    if (!vectoren || vectoren.length === 0) return { anchor: 'bottom', off: [0, -1.15] };
+    if (!vectoren || vectoren.length === 0) return { anchor: 'bottom', off: [0, -0.75] };
     var best = KANDIDATEN[0], bestScore = -Infinity;
     KANDIDATEN.forEach(function(c) {
       var maxDot = -Infinity;
@@ -221,6 +221,26 @@ map.on('load', function() {
   var dotFeatures = [];
   var plaatsFeatures = [];
   var landData = [];
+
+  // alle (ontdubbelde) stop-locaties, voor het wegduwen van namen bij nabije markers
+  var locLijst = Object.keys(perLocatie).map(function(k) {
+    var g = perLocatie[k];
+    var st = g.find(function(s) { return s.type === 'destination'; }) || g[0];
+    return { lng: st.lng, lat: st.lat };
+  });
+  // richtingen naar de dichtstbijzijnde N andere markers (geo-ruimte, y = noord)
+  function buurRichtingen(lng, lat, aantal) {
+    var latRad = lat * Math.PI / 180;
+    var lijst = [];
+    locLijst.forEach(function(p) {
+      var gx = (p.lng - lng) * Math.cos(latRad);
+      var gy = (p.lat - lat);
+      var d = Math.sqrt(gx * gx + gy * gy);
+      if (d > 1e-9) lijst.push({ d: d, v: [gx / d, gy / d] });
+    });
+    lijst.sort(function(a, b) { return a.d - b.d; });
+    return lijst.slice(0, aantal).map(function(x) { return x.v; });
+  }
 
   Object.keys(perLocatie).forEach(function(key) {
     var groep = perLocatie[key];
@@ -252,7 +272,10 @@ map.on('load', function() {
     else if (bijzonderVervoer) { sortKey = 10 - bekendheid; }
     else { sortKey = 20 - bekendheid; }
 
-    var plaatsing = kiesPlaatsing(lijnRichtingen[key]);
+    // plaats de naam weg van zowel de aangrenzende route-lijnen als de dichtstbijzijnde andere markers
+    var vermijd = (lijnRichtingen[key] || []).slice();
+    buurRichtingen(stop.lng, stop.lat, 3).forEach(function(v) { vermijd.push(v); });
+    var plaatsing = kiesPlaatsing(vermijd);
     plaatsFeatures.push({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [stop.lng, stop.lat] },

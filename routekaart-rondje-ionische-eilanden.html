@@ -159,7 +159,7 @@ map.on('load', function() {
       pijlEl.style.cssText = 'line-height:0;cursor:default;user-select:none;';
       var pijlInner = document.createElement('div');
       pijlInner.style.cssText = 'line-height:0;transform:rotate(' + pHoek + 'deg);';
-      pijlInner.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="7" height="8" viewBox="0 0 7 8"><polygon points="3.5,0 0,8 7,8" fill="' + KLEUR_DONKER + '" stroke="' + KLEUR_DONKER + '" stroke-width="0.5" stroke-linejoin="round"/></svg>';
+      pijlInner.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="-1 -1 9 10"><polygon points="3.5,0 0,8 7,8" fill="' + KLEUR_DONKER + '" stroke="' + KLEUR_DONKER + '" stroke-width="1.3" stroke-linejoin="round"/></svg>';
       pijlEl.appendChild(pijlInner);
       new mapboxgl.Marker({ element: pijlEl, anchor: 'center' }).setLngLat(pijlPos).addTo(map);
       pijlMarkers.push({ el: pijlEl, lngLat: pijlPos });

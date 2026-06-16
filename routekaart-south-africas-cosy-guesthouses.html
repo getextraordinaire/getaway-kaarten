@@ -194,17 +194,17 @@ map.on('load', function() {
   }
 
   var KANDIDATEN = [
-    { dir: [1, 0],   anchor: 'left',         off: [1.15, 0] },
-    { dir: [-1, 0],  anchor: 'right',        off: [-1.15, 0] },
-    { dir: [0, 1],   anchor: 'bottom',       off: [0, -1.15] },
-    { dir: [0, -1],  anchor: 'top',          off: [0, 1.15] },
-    { dir: [0.7071, 0.7071],   anchor: 'bottom-left',  off: [0.85, -0.85] },
-    { dir: [-0.7071, 0.7071],  anchor: 'bottom-right', off: [-0.85, -0.85] },
-    { dir: [0.7071, -0.7071],  anchor: 'top-left',     off: [0.85, 0.85] },
-    { dir: [-0.7071, -0.7071], anchor: 'top-right',    off: [-0.85, 0.85] }
+    { dir: [1, 0],   anchor: 'left',         off: [0.75, 0] },
+    { dir: [-1, 0],  anchor: 'right',        off: [-0.75, 0] },
+    { dir: [0, 1],   anchor: 'bottom',       off: [0, -0.75] },
+    { dir: [0, -1],  anchor: 'top',          off: [0, 0.75] },
+    { dir: [0.7071, 0.7071],   anchor: 'bottom-left',  off: [0.55, -0.55] },
+    { dir: [-0.7071, 0.7071],  anchor: 'bottom-right', off: [-0.55, -0.55] },
+    { dir: [0.7071, -0.7071],  anchor: 'top-left',     off: [0.55, 0.55] },
+    { dir: [-0.7071, -0.7071], anchor: 'top-right',    off: [-0.55, 0.55] }
   ];
   function kiesPlaatsing(vectoren) {
-    if (!vectoren || vectoren.length === 0) return { anchor: 'bottom', off: [0, -1.15] };
+    if (!vectoren || vectoren.length === 0) return { anchor: 'bottom', off: [0, -0.75] };
     var best = KANDIDATEN[0], bestScore = -Infinity;
     KANDIDATEN.forEach(function(c) {
       var maxDot = -Infinity;
@@ -221,6 +221,26 @@ map.on('load', function() {
   var dotFeatures = [];
   var plaatsFeatures = [];
   var landData = [];
+
+  // alle (ontdubbelde) stop-locaties, voor het wegduwen van namen bij nabije markers
+  var locLijst = Object.keys(perLocatie).map(function(k) {
+    var g = perLocatie[k];
+    var st = g.find(function(s) { return s.type === 'destination'; }) || g[0];
+    return { lng: st.lng, lat: st.lat };
+  });
+  // richtingen naar de dichtstbijzijnde N andere markers (geo-ruimte, y = noord)
+  function buurRichtingen(lng, lat, aantal) {
+    var latRad = lat * Math.PI / 180;
+    var lijst = [];
+    locLijst.forEach(function(p) {
+      var gx = (p.lng - lng) * Math.cos(latRad);
+      var gy = (p.lat - lat);
+      var d = Math.sqrt(gx * gx + gy * gy);
+      if (d > 1e-9) lijst.push({ d: d, v: [gx / d, gy / d] });
+    });
+    lijst.sort(function(a, b) { return a.d - b.d; });
+    return lijst.slice(0, aantal).map(function(x) { return x.v; });
+  }
 
   Object.keys(perLocatie).forEach(function(key) {
     var groep = perLocatie[key];
@@ -252,7 +272,10 @@ map.on('load', function() {
     else if (bijzonderVervoer) { sortKey = 10 - bekendheid; }
     else { sortKey = 20 - bekendheid; }
 
-    var plaatsing = kiesPlaatsing(lijnRichtingen[key]);
+    // plaats de naam weg van zowel de aangrenzende route-lijnen als de dichtstbijzijnde andere markers
+    var vermijd = (lijnRichtingen[key] || []).slice();
+    buurRichtingen(stop.lng, stop.lat, 3).forEach(function(v) { vermijd.push(v); });
+    var plaatsing = kiesPlaatsing(vermijd);
     plaatsFeatures.push({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [stop.lng, stop.lat] },

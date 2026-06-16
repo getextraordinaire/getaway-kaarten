@@ -366,12 +366,15 @@ map.on('load', function() {
 
   function ververseTransportIconen() {
     var obstakels = [];
+    var zichtbareCoords = {};
     try {
+      // alleen daadwerkelijk zichtbare (niet-weggevallen) bestemmingsnamen tellen mee
       var namen = map.queryRenderedFeatures({ layers: ['plaatsnamen-layer'] });
       namen.forEach(function(f) {
         if (f.geometry && f.geometry.coordinates) {
           var p = map.project(f.geometry.coordinates);
           obstakels.push({ x: p.x, y: p.y - 16 });
+          zichtbareCoords[f.geometry.coordinates[0].toFixed(5) + ',' + f.geometry.coordinates[1].toFixed(5)] = true;
         }
       });
     } catch (e) {}
@@ -391,20 +394,9 @@ map.on('load', function() {
       tm.el.style.display = botst ? 'none' : '';
     });
 
-    // autopijltje: verberg als een marker-rondje te dicht bij het pijltje ligt (komt terug bij inzoomen)
-    var DREMPEL_PIJL = 16;
-    pijlMarkers.forEach(function(pm) {
-      var pp = map.project(pm.lngLat);
-      var dichtbij = dotFeatures.some(function(f) {
-        var dp = map.project(f.geometry.coordinates);
-        var dx = pp.x - dp.x, dy = pp.y - dp.y;
-        return Math.sqrt(dx * dx + dy * dy) < DREMPEL_PIJL;
-      });
-      pm.el.style.display = dichtbij ? 'none' : '';
-    });
-
-    // bestemmingsnaam verbergen als zijn tekst over een ANDER rondje valt (komt terug bij inzoomen)
+    // bestemmingsnaam verbergen als zijn tekst over een ANDER rondje valt; verzamel zichtbare naam-vlakken
     var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
+    var naamBoxen = [];
     plaatsFeatures.forEach(function(pf, idx) {
       var sp = map.project(pf.geometry.coordinates);
       var off = pf.properties.offset || [0, 0];
@@ -416,10 +408,27 @@ map.on('load', function() {
       var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
       var x1 = x0 + w, y1 = y0 + h;
       var raakt = markerPx.some(function(mp, j) {
-        if (j === idx) return false;
+        if (j === idx) return false; // eigen rondje overslaan
         return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
+      var key = pf.geometry.coordinates[0].toFixed(5) + ',' + pf.geometry.coordinates[1].toFixed(5);
+      if (!raakt && zichtbareCoords[key]) naamBoxen.push([x0, y0, x1, y1]);
+    });
+
+    // autopijltje: verberg als een marker-rondje te dicht ligt OF als het onder een zichtbare naam valt (komt terug bij inzoomen)
+    var DREMPEL_PIJL = 16;
+    pijlMarkers.forEach(function(pm) {
+      var pp = map.project(pm.lngLat);
+      var dichtbijDot = dotFeatures.some(function(f) {
+        var dp = map.project(f.geometry.coordinates);
+        var dx = pp.x - dp.x, dy = pp.y - dp.y;
+        return Math.sqrt(dx * dx + dy * dy) < DREMPEL_PIJL;
+      });
+      var onderNaam = naamBoxen.some(function(b) {
+        return pp.x > b[0] - 2 && pp.x < b[2] + 2 && pp.y > b[1] - 2 && pp.y < b[3] + 2;
+      });
+      pm.el.style.display = (dichtbijDot || onderNaam) ? 'none' : '';
     });
   }
   map.on('idle', ververseTransportIconen);

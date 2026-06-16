@@ -319,6 +319,19 @@ map.on('load', function() {
     }
   });
 
+  // onzichtbare obstakels op de markers: plaatsnamen botsen nu ook met andere rondjes (niet enkel met andere namen).
+  // Een naam die op een ander rondje zou vallen, wijkt/verdwijnt bij uitzoomen en komt terug bij inzoomen.
+  if (!map.hasImage('marker-obstakel')) {
+    map.addImage('marker-obstakel', { width: 9, height: 9, data: new Uint8Array(9 * 9 * 4) });
+  }
+  map.addLayer({
+    id: 'marker-obstakels',
+    type: 'symbol',
+    source: 'stops-dots',
+    layout: { 'icon-image': 'marker-obstakel', 'icon-size': 1, 'icon-allow-overlap': true, 'icon-ignore-placement': false },
+    paint: { 'icon-opacity': 0 }
+  });
+
   map.addSource('plaatsnamen', { type: 'geojson', data: { type: 'FeatureCollection', features: plaatsFeatures } });
   map.addLayer({
     id: 'plaatsnamen-layer',

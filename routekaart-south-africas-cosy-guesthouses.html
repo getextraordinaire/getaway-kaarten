@@ -242,6 +242,18 @@ map.on('load', function() {
     return lijst.slice(0, aantal).map(function(x) { return x.v; });
   }
 
+  // kaartmidden (bounding-box) + grootste afstand, om namen van randstops naar binnen te richten (mobiel)
+  var _lngs = locLijst.map(function(p) { return p.lng; });
+  var _lats = locLijst.map(function(p) { return p.lat; });
+  var midLng = (Math.min.apply(null, _lngs) + Math.max.apply(null, _lngs)) / 2;
+  var midLat = (Math.min.apply(null, _lats) + Math.max.apply(null, _lats)) / 2;
+  var midLatRad = midLat * Math.PI / 180;
+  var maxAfstand = 0;
+  locLijst.forEach(function(p) {
+    var d = Math.sqrt(Math.pow((p.lng - midLng) * Math.cos(midLatRad), 2) + Math.pow(p.lat - midLat, 2));
+    if (d > maxAfstand) maxAfstand = d;
+  });
+
   Object.keys(perLocatie).forEach(function(key) {
     var groep = perLocatie[key];
     var stop = groep.find(function(s) { return s.type === 'destination'; }) || groep[0];
@@ -275,6 +287,13 @@ map.on('load', function() {
     // plaats de naam weg van zowel de aangrenzende route-lijnen als de dichtstbijzijnde andere markers
     var vermijd = (lijnRichtingen[key] || []).slice();
     buurRichtingen(stop.lng, stop.lat, 3).forEach(function(v) { vermijd.push(v); });
+    // randstop (buitenste ~40%): richt de naam naar binnen, zodat hij niet over de kaartrand steekt (mobiel)
+    var uitDx = (stop.lng - midLng) * Math.cos(midLatRad);
+    var uitDy = (stop.lat - midLat);
+    var uitLen = Math.sqrt(uitDx * uitDx + uitDy * uitDy);
+    if (maxAfstand > 0 && uitLen > 0.6 * maxAfstand) {
+      vermijd.push([uitDx / uitLen, uitDy / uitLen]);
+    }
     var plaatsing = kiesPlaatsing(vermijd);
     plaatsFeatures.push({
       type: 'Feature',

@@ -133,20 +133,20 @@ const transportConfig = {
   train:   { dash: [6, 2], width: 3, label: 'Trein',      svg: 'M12,2c-4.42,0-8,0.5-8,4v9.5C4,17.43,5.57,19,7.5,19L6,20.5V21h12v-0.5L16.5,19c1.93,0,3.5-1.57,3.5-3.5V6C20,2.5,16.42,2,12,2z M7.5,17C6.67,17,6,16.33,6,15.5S6.67,14,7.5,14S9,14.67,9,15.5S8.33,17,7.5,17z M11,11H6V6h5V11z M16.5,17c-0.83,0-1.5-0.67-1.5-1.5s0.67-1.5,1.5-1.5s1.5,0.67,1.5,1.5S17.33,17,16.5,17z M18,11h-5V6h5V11z' },
   cruise:  { dash: [8, 3], width: 3, label: 'Cruise',     svg: 'M20,21c-1.39,0-2.78-0.47-4-1.32c-2.44,1.71-5.56,1.71-8,0C6.78,20.53,5.39,21,4,21H2v2h2c1.38,0,2.74-0.35,4-0.99c2.52,1.29,5.48,1.29,8,0c1.26,0.65,2.62,0.99,4,0.99h2v-2H20z M3.95,19H4c1.6,0,3.02-0.88,4-2c0.98,1.12,2.4,2,4,2s3.02-0.88,4-2c0.98,1.12,2.4,2,4,2h0.05l1.89-6.68c0.08-0.26,0.06-0.54-0.06-0.78s-0.34-0.42-0.6-0.5L20,10.62V6c0-1.1-0.9-2-2-2h-3V1H9v3H6C4.9,4,4,4.9,4,6v4.62l-1.29,0.42c-0.26,0.08-0.48,0.26-0.6,0.5s-0.15,0.52-0.06,0.78L3.95,19z M6,6h12v3.97L12,8L6,9.97V6z' },
   walk:    { dash: [2, 3], width: 2, label: 'Wandelen',   svg: 'M13.5,5.5c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2S12.4,5.5,13.5,5.5z M9.8,8.9L7,23h2.1l1.8-8l2.1,2v6h2v-7.5l-2.1-2l0.6-3C12.8,11,14.8,12,17,12v-2c-1.9,0-3.5-1-4.3-2.4l-1-1.6C11.3,5.4,10.7,5,10,5C9.7,5,9.5,5.1,9.2,5.1L4,7.3V13h2V8.6l1.8-0.7' },
-  car:     { dash: [],     width: 3, label: 'Auto',       svg: 'M18.92,6.01C18.72,5.42,18.16,5,17.5,5h-11C5.84,5,5.29,5.42,5.08,6.01L3,12v8c0,0.55,0.45,1,1,1h1c0.55,0,1-0.45,1-1v-1h12v1c0,0.55,0.45,1,1,1h1c0.55,0,1-0.45,1-1v-8L18.92,6.01z M6.5,16C5.67,16,5,15.33,5,14.5S5.67,13,6.5,13S8,13.67,8,14.5S7.33,16,6.5,16z M17.5,16c-0.83,0-1.5-0.67-1.5-1.5s0.67-1.5,1.5-1.5s1.5,0.67,1.5,1.5S18.33,16,17.5,16z M5,11l1.5-4.5h11L19,11H5z' },
+  car:     { dash: [],     width: 3, label: 'Auto',       svg: '' },
   unknown: { dash: [],     width: 2, label: '',           svg: '' }
 };
 
-function svgIcon(pad, maat) {
+function svgIcon(pad, maat, halo) {
   if (!pad) return '';
-  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + maat + '" height="' + maat + '" viewBox="0 0 24 24" fill="' + KLEUR_DONKER + '"><path d="' + pad + '"/></svg>';
+  var h = halo ? '<path d="' + pad + '" fill="none" stroke="' + KLEUR_LICHT + '" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>' : '';
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + maat + '" height="' + maat + '" viewBox="0 0 24 24" fill="' + KLEUR_DONKER + '">' + h + '<path d="' + pad + '"/></svg>';
 }
 
 function boogCoords(from, to, transport, punten) {
   punten = punten || 40;
   var useBoog = (transport === 'flight' || transport === 'ferry' || transport === 'cruise');
   if (!useBoog) {
-    // rechte lijn, maar verdicht tot meerdere punten zodat het midden-punt (voor het transport-icoon) echt in het midden ligt en niet op een stop
     var rechte = [];
     for (var k = 0; k <= punten; k++) {
       var tt = k / punten;
@@ -156,7 +156,7 @@ function boogCoords(from, to, transport, punten) {
   }
   var dx = to[0] - from[0]; var dy = to[1] - from[1];
   var dist = Math.sqrt(dx*dx + dy*dy);
-  var boogHoogte = dist * 0.20;
+  var boogHoogte = dist * (transport === 'flight' ? 0.40 : 0.20);
   var mx = (from[0] + to[0]) / 2; var my = (from[1] + to[1]) / 2;
   var nx = -dy / dist; var ny = dx / dist;
   var ctrl = [mx + nx * boogHoogte, my + ny * boogHoogte];
@@ -196,6 +196,8 @@ map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 
 map.on('load', function() {
 
+  var transportMarkers = [];
+
   segments.forEach(function(seg, idx) {
     var cfg = transportConfig[seg.transport] || transportConfig.unknown;
     var coords = boogCoords(seg.from, seg.to, seg.transport);
@@ -209,8 +211,19 @@ map.on('load', function() {
       var iconPos = coords[Math.floor(coords.length * 0.5)];
       var iconEl = document.createElement('div');
       iconEl.style.cssText = 'cursor:default;user-select:none;line-height:0;';
-      iconEl.innerHTML = svgIcon(cfg.svg, 16);
+      var innerEl = document.createElement('div');
+      innerEl.style.cssText = 'line-height:0;';
+      if (seg.transport === 'flight') {
+        var fLatRad = ((seg.from[1] + seg.to[1]) / 2) * Math.PI / 180;
+        var fdx = (seg.to[0] - seg.from[0]) * Math.cos(fLatRad);
+        var fdy = -(seg.to[1] - seg.from[1]);
+        var fHoek = Math.atan2(fdy, fdx) * 180 / Math.PI + 90;
+        innerEl.style.transform = 'rotate(' + fHoek + 'deg)';
+      }
+      innerEl.innerHTML = svgIcon(cfg.svg, 16, true);
+      iconEl.appendChild(innerEl);
       new mapboxgl.Marker({ element: iconEl, anchor: 'center' }).setLngLat(iconPos).addTo(map);
+      transportMarkers.push({ el: iconEl, lngLat: iconPos });
     }
   });
 
@@ -220,6 +233,51 @@ map.on('load', function() {
     if (!perLocatie[key]) perLocatie[key] = [];
     perLocatie[key].push(stop);
   });
+
+  var TOON_LANDNAMEN = false;
+
+  function locKey(s){ return s.lng.toFixed(5) + ',' + s.lat.toFixed(5); }
+  var lijnRichtingen = {};
+  for (var li = 0; li < stops.length; li++) {
+    var ls = stops[li];
+    var lk = locKey(ls);
+    if (!lijnRichtingen[lk]) lijnRichtingen[lk] = [];
+    var buren = [];
+    if (li > 0) buren.push(stops[li - 1]);
+    if (li < stops.length - 1) buren.push(stops[li + 1]);
+    buren.forEach(function(b) {
+      var latRad = ls.lat * Math.PI / 180;
+      var gx = (b.lng - ls.lng) * Math.cos(latRad);
+      var gy = (b.lat - ls.lat);
+      var len = Math.sqrt(gx * gx + gy * gy);
+      if (len > 1e-9) lijnRichtingen[lk].push([gx / len, gy / len]);
+    });
+  }
+
+  var KANDIDATEN = [
+    { dir: [1, 0],   anchor: 'left',         off: [1.15, 0] },
+    { dir: [-1, 0],  anchor: 'right',        off: [-1.15, 0] },
+    { dir: [0, 1],   anchor: 'bottom',       off: [0, -1.15] },
+    { dir: [0, -1],  anchor: 'top',          off: [0, 1.15] },
+    { dir: [0.7071, 0.7071],   anchor: 'bottom-left',  off: [0.85, -0.85] },
+    { dir: [-0.7071, 0.7071],  anchor: 'bottom-right', off: [-0.85, -0.85] },
+    { dir: [0.7071, -0.7071],  anchor: 'top-left',     off: [0.85, 0.85] },
+    { dir: [-0.7071, -0.7071], anchor: 'top-right',    off: [-0.85, 0.85] }
+  ];
+  function kiesPlaatsing(vectoren) {
+    if (!vectoren || vectoren.length === 0) return { anchor: 'bottom', off: [0, -1.15] };
+    var best = KANDIDATEN[0], bestScore = -Infinity;
+    KANDIDATEN.forEach(function(c) {
+      var maxDot = -Infinity;
+      vectoren.forEach(function(v) {
+        var dot = c.dir[0] * v[0] + c.dir[1] * v[1];
+        if (dot > maxDot) maxDot = dot;
+      });
+      var score = -maxDot;
+      if (score > bestScore) { bestScore = score; best = c; }
+    });
+    return { anchor: best.anchor, off: best.off };
+  }
 
   var dotFeatures = [];
   var plaatsFeatures = [];
@@ -255,10 +313,11 @@ map.on('load', function() {
     else if (bijzonderVervoer) { sortKey = 10 - bekendheid; }
     else { sortKey = 20 - bekendheid; }
 
+    var plaatsing = kiesPlaatsing(lijnRichtingen[key]);
     plaatsFeatures.push({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [stop.lng, stop.lat] },
-      properties: { naam: stop.destination, sortKey: sortKey }
+      properties: { naam: stop.destination, sortKey: sortKey, anchor: plaatsing.anchor, offset: plaatsing.off }
     });
 
     if (toonLand) {
@@ -266,21 +325,19 @@ map.on('load', function() {
     }
   });
 
-  // RONDJES als circle-layer (boven de lijnen)
   map.addSource('stops-dots', { type: 'geojson', data: { type: 'FeatureCollection', features: dotFeatures } });
   map.addLayer({
     id: 'stops-dots-layer',
     type: 'circle',
     source: 'stops-dots',
     paint: {
-      'circle-radius': 7,
+      'circle-radius': 3.5,
       'circle-color': ['case', ['get', 'isEindpunt'], KLEUR_LICHT, KLEUR_DONKER],
       'circle-stroke-color': ['case', ['get', 'isEindpunt'], KLEUR_DONKER, KLEUR_LICHT],
-      'circle-stroke-width': ['case', ['get', 'isEindpunt'], 3, 2]
+      'circle-stroke-width': ['case', ['get', 'isEindpunt'], 1.5, 1]
     }
   });
 
-  // BESTEMMINGSNAMEN als symbol-layer MET botsingdetectie (NA de rondjes -> altijd erboven)
   map.addSource('plaatsnamen', { type: 'geojson', data: { type: 'FeatureCollection', features: plaatsFeatures } });
   map.addLayer({
     id: 'plaatsnamen-layer',
@@ -290,8 +347,8 @@ map.on('load', function() {
       'text-field': ['get', 'naam'],
       'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
       'text-size': 13,
-      'text-anchor': 'bottom',
-      'text-offset': [0, -1.1],
+      'text-anchor': ['get', 'anchor'],
+      'text-offset': ['get', 'offset'],
       'text-allow-overlap': false,
       'text-ignore-placement': false,
       'symbol-sort-key': ['get', 'sortKey']
@@ -299,7 +356,7 @@ map.on('load', function() {
     paint: {
       'text-color': KLEUR_DONKER,
       'text-halo-color': KLEUR_LICHT,
-      'text-halo-width': 1.6
+      'text-halo-width': 2.2
     }
   });
 
@@ -314,14 +371,44 @@ map.on('load', function() {
   map.on('mouseenter', 'stops-dots-layer', function() { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', 'stops-dots-layer', function() { map.getCanvas().style.cursor = ''; });
 
-  // LANDNAMEN: altijd zichtbaar (HTML-markers, allow-overlap, boven alles)
-  landData.forEach(function(d) {
-    var lab = document.createElement('div');
-    lab.className = 'land-label-marker';
-    lab.innerHTML = '<div class="stop-land">' + d.toonLand + '</div>';
-    var m = new mapboxgl.Marker({ element: lab, anchor: 'bottom', offset: [0, -30] }).setLngLat([d.lng, d.lat]).addTo(map);
-    m.getElement().style.zIndex = 1000;
-  });
+  if (TOON_LANDNAMEN) {
+    landData.forEach(function(d) {
+      var lab = document.createElement('div');
+      lab.className = 'land-label-marker';
+      lab.innerHTML = '<div class="stop-land">' + d.toonLand + '</div>';
+      var m = new mapboxgl.Marker({ element: lab, anchor: 'bottom', offset: [0, -30] }).setLngLat([d.lng, d.lat]).addTo(map);
+      m.getElement().style.zIndex = 1000;
+    });
+  }
+
+  function ververseTransportIconen() {
+    var obstakels = [];
+    try {
+      var namen = map.queryRenderedFeatures({ layers: ['plaatsnamen-layer'] });
+      namen.forEach(function(f) {
+        if (f.geometry && f.geometry.coordinates) {
+          var p = map.project(f.geometry.coordinates);
+          obstakels.push({ x: p.x, y: p.y - 16 });
+        }
+      });
+    } catch (e) {}
+    if (TOON_LANDNAMEN) {
+      landData.forEach(function(d) {
+        var p = map.project([d.lng, d.lat]);
+        obstakels.push({ x: p.x, y: p.y - 30 });
+      });
+    }
+    var DREMPEL = 24;
+    transportMarkers.forEach(function(tm) {
+      var p = map.project(tm.lngLat);
+      var botst = obstakels.some(function(o) {
+        var dx = p.x - o.x, dy = p.y - o.y;
+        return Math.sqrt(dx * dx + dy * dy) < DREMPEL;
+      });
+      tm.el.style.display = botst ? 'none' : '';
+    });
+  }
+  map.on('idle', ververseTransportIconen);
 
   var bounds = new mapboxgl.LngLatBounds();
   stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });

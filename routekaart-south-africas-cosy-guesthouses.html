@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Routekaart - south-africas-cosy-guesthouses</title>
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #F9FBFB; }
+  #map { width: 100%; height: 65vh; min-height: 420px; }
+  .land-label-marker { pointer-events: none; }
+  .stop-land { font-size: 15px; font-weight: 700; font-style: italic; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; text-shadow: 0 1px 2px rgba(40,48,56,0.78); }
+  #legenda { padding: 16px 20px; background: #F9FBFB; border-top: 1px solid #ABC6CB; }
+  #legenda h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: #3B4651; }
+  .legenda-uitleg { display: flex; gap: 16px; margin-bottom: 12px; font-size: 11px; color: #3B4651; flex-wrap: wrap; }
+  .legenda-uitleg span { display: inline-flex; align-items: center; gap: 5px; }
+  .mini-ring { width: 11px; height: 11px; border-radius: 50%; background: #F9FBFB; border: 2px solid #3B4651; display: inline-block; }
+  .legenda-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #B9D9E0; font-size: 13px; color: #3B4651; }
+  .legenda-item:last-child { border-bottom: none; }
+  .legenda-dag { color: #3B4651; font-size: 12px; font-weight: 600; min-width: 72px; flex-shrink: 0; }
+  .legenda-transport { display: inline-flex; align-items: center; margin-left: 2px; }
+  .mapboxgl-popup-content { padding: 10px 14px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; box-shadow: 0 2px 8px rgba(59,70,81,0.2); background: #F9FBFB; }
+  .popup-title { font-weight: 600; font-size: 13px; margin-bottom: 3px; color: #3B4651; }
+  .popup-dagen { color: #3B4651; font-size: 12px; }
+  .popup-transport { font-size: 11px; color: #3B4651; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="legenda">
+  <h3>Route</h3>
+  <div class="legenda-uitleg">
+    <span><span class="mini-ring"></span> Start- en eindpunt</span>
+  </div>
+  <div id="legenda-items"></div>
+</div>
+<script>
+mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
+
+const stops = [{"order":1,"destination":"Johannesburg","country":"South Africa","toonLand":"Zuid-Afrika","days":1,"lng":28.042114,"lat":-26.204678,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Graskop","country":"South Africa","toonLand":"","days":1,"lng":30.840658,"lat":-24.933699,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 2","isStart":false,"isEind":false},{"order":3,"destination":"Kruger National Park","country":"South Africa","toonLand":"","days":2,"lng":31.574825,"lat":-23.853079,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 3-4","isStart":false,"isEind":false},{"order":4,"destination":"eSwatini","country":"Eswatini","toonLand":"","days":1,"lng":31.13396,"lat":-26.314901,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 5","isStart":false,"isEind":false},{"order":5,"destination":"St. Lucia","country":"South Africa","toonLand":"","days":2,"lng":32.411842,"lat":-28.374832,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 6-7","isStart":false,"isEind":false},{"order":6,"destination":"Drakensberg","country":"South Africa","toonLand":"","days":2,"lng":29.126863,"lat":-28.612917,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 8-9","isStart":false,"isEind":false},{"order":7,"destination":"Clarens","country":"South Africa","toonLand":"","days":1,"lng":28.42062,"lat":-28.515364,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 10","isStart":false,"isEind":false},{"order":8,"destination":"Lesotho","country":"Lesotho","toonLand":"","days":2,"lng":27.496523,"lat":-29.344175,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 11-12","isStart":false,"isEind":false},{"order":9,"destination":"Cradock","country":"South Africa","toonLand":"","days":1,"lng":25.617104,"lat":-32.169456,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 13","isStart":false,"isEind":false},{"order":10,"destination":"Addo","country":"South Africa","toonLand":"","days":2,"lng":25.688894,"lat":-33.558258,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 14-15","isStart":false,"isEind":false},{"order":11,"destination":"Knysna","country":"South Africa","toonLand":"","days":2,"lng":23.048079,"lat":-34.03538,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 16-17","isStart":false,"isEind":false},{"order":12,"destination":"Swellendam","country":"South Africa","toonLand":"","days":1,"lng":20.44437,"lat":-34.019894,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 18","isStart":false,"isEind":false},{"order":13,"destination":"Hermanus","country":"South Africa","toonLand":"","days":1,"lng":19.241768,"lat":-34.420567,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 18","isStart":false,"isEind":false},{"order":14,"destination":"Kaapstad","country":"South Africa","toonLand":"","days":2,"lng":18.420296,"lat":-33.922497,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 19-20","isStart":false,"isEind":false},{"order":15,"destination":"Kaapstad","country":"South Africa","toonLand":"","days":0,"lng":18.420296,"lat":-33.922497,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 21-22","isStart":false,"isEind":true}];
+const segments = [{"from":[28.042114,-26.204678],"to":[30.840658,-24.933699],"transport":"car"},{"from":[30.840658,-24.933699],"to":[31.574825,-23.853079],"transport":"car"},{"from":[31.574825,-23.853079],"to":[31.13396,-26.314901],"transport":"car"},{"from":[31.13396,-26.314901],"to":[32.411842,-28.374832],"transport":"car"},{"from":[32.411842,-28.374832],"to":[29.126863,-28.612917],"transport":"car"},{"from":[29.126863,-28.612917],"to":[28.42062,-28.515364],"transport":"car"},{"from":[28.42062,-28.515364],"to":[27.496523,-29.344175],"transport":"car"},{"from":[27.496523,-29.344175],"to":[25.617104,-32.169456],"transport":"car"},{"from":[25.617104,-32.169456],"to":[25.688894,-33.558258],"transport":"car"},{"from":[25.688894,-33.558258],"to":[23.048079,-34.03538],"transport":"car"},{"from":[23.048079,-34.03538],"to":[20.44437,-34.019894],"transport":"car"},{"from":[20.44437,-34.019894],"to":[19.241768,-34.420567],"transport":"car"},{"from":[19.241768,-34.420567],"to":[18.420296,-33.922497],"transport":"car"},{"from":[18.420296,-33.922497],"to":[18.420296,-33.922497],"transport":"car"}];
+const tripCountries = ["ZA","SZ","LS"];
+
+const KLEUR_LICHT = '#F9FBFB';
+const KLEUR_BLAUW = '#B9D9E0';
+const KLEUR_DONKER = '#3B4651';
+const KLEUR_GRIJS = '#ABC6CB';
+
+const transportConfig = {
+  flight:  { dash: [2, 2], width: 2, label: 'Vlucht',     svg: 'M21,16v-2l-8-5V3.5C13,2.67,12.33,2,11.5,2S10,2.67,10,3.5V9l-8,5v2l8-2.5V19l-2,1.5V22l3.5-1l3.5,1v-1.5L13,19v-5.5L21,16z' },
+  ferry:   { dash: [4, 2], width: 2, label: 'Ferry/boot', svg: 'M20,21c-1.39,0-2.78-0.47-4-1.32c-2.44,1.71-5.56,1.71-8,0C6.78,20.53,5.39,21,4,21H2v2h2c1.38,0,2.74-0.35,4-0.99c2.52,1.29,5.48,1.29,8,0c1.26,0.65,2.62,0.99,4,0.99h2v-2H20z M3.95,19H4c1.6,0,3.02-0.88,4-2c0.98,1.12,2.4,2,4,2s3.02-0.88,4-2c0.98,1.12,2.4,2,4,2h0.05l1.89-6.68c0.08-0.26,0.06-0.54-0.06-0.78s-0.34-0.42-0.6-0.5L20,10.62V6c0-1.1-0.9-2-2-2h-3V1H9v3H6C4.9,4,4,4.9,4,6v4.62l-1.29,0.42c-0.26,0.08-0.48,0.26-0.6,0.5s-0.15,0.52-0.06,0.78L3.95,19z M6,6h12v3.97L12,8L6,9.97V6z' },
+  train:   { dash: [6, 2], width: 3, label: 'Trein',      svg: 'M12,2c-4.42,0-8,0.5-8,4v9.5C4,17.43,5.57,19,7.5,19L6,20.5V21h12v-0.5L16.5,19c1.93,0,3.5-1.57,3.5-3.5V6C20,2.5,16.42,2,12,2z M7.5,17C6.67,17,6,16.33,6,15.5S6.67,14,7.5,14S9,14.67,9,15.5S8.33,17,7.5,17z M11,11H6V6h5V11z M16.5,17c-0.83,0-1.5-0.67-1.5-1.5s0.67-1.5,1.5-1.5s1.5,0.67,1.5,1.5S17.33,17,16.5,17z M18,11h-5V6h5V11z' },
+  cruise:  { dash: [8, 3], width: 3, label: 'Cruise',     svg: 'M20,21c-1.39,0-2.78-0.47-4-1.32c-2.44,1.71-5.56,1.71-8,0C6.78,20.53,5.39,21,4,21H2v2h2c1.38,0,2.74-0.35,4-0.99c2.52,1.29,5.48,1.29,8,0c1.26,0.65,2.62,0.99,4,0.99h2v-2H20z M3.95,19H4c1.6,0,3.02-0.88,4-2c0.98,1.12,2.4,2,4,2s3.02-0.88,4-2c0.98,1.12,2.4,2,4,2h0.05l1.89-6.68c0.08-0.26,0.06-0.54-0.06-0.78s-0.34-0.42-0.6-0.5L20,10.62V6c0-1.1-0.9-2-2-2h-3V1H9v3H6C4.9,4,4,4.9,4,6v4.62l-1.29,0.42c-0.26,0.08-0.48,0.26-0.6,0.5s-0.15,0.52-0.06,0.78L3.95,19z M6,6h12v3.97L12,8L6,9.97V6z' },
+  walk:    { dash: [2, 3], width: 2, label: 'Wandelen',   svg: 'M13.5,5.5c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2S12.4,5.5,13.5,5.5z M9.8,8.9L7,23h2.1l1.8-8l2.1,2v6h2v-7.5l-2.1-2l0.6-3C12.8,11,14.8,12,17,12v-2c-1.9,0-3.5-1-4.3-2.4l-1-1.6C11.3,5.4,10.7,5,10,5C9.7,5,9.5,5.1,9.2,5.1L4,7.3V13h2V8.6l1.8-0.7' },
+  car:     { dash: [],     width: 3, label: 'Auto',       svg: '' },
+  unknown: { dash: [],     width: 2, label: '',           svg: '' }
+};
+
+function svgIcon(pad, maat, halo) {
+  if (!pad) return '';
+  var h = halo ? '<path d="' + pad + '" fill="none" stroke="' + KLEUR_LICHT + '" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>' : '';
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + maat + '" height="' + maat + '" viewBox="0 0 24 24" fill="' + KLEUR_DONKER + '">' + h + '<path d="' + pad + '"/></svg>';
+}
+
+function boogCoords(from, to, transport, punten) {
+  punten = punten || 40;
+  var useBoog = (transport === 'flight' || transport === 'ferry' || transport === 'cruise');
+  if (!useBoog) {
+    var rechte = [];
+    for (var k = 0; k <= punten; k++) {
+      var tt = k / punten;
+      rechte.push([from[0] + (to[0] - from[0]) * tt, from[1] + (to[1] - from[1]) * tt]);
+    }
+    return rechte;
+  }
+  var dx = to[0] - from[0]; var dy = to[1] - from[1];
+  var dist = Math.sqrt(dx*dx + dy*dy);
+  var boogHoogte = dist * (transport === 'flight' ? 0.46 : 0.20);
+  var mx = (from[0] + to[0]) / 2; var my = (from[1] + to[1]) / 2;
+  var nx = -dy / dist; var ny = dx / dist;
+  var ctrl = [mx + nx * boogHoogte, my + ny * boogHoogte];
+  var coords = [];
+  for (var i = 0; i <= punten; i++) {
+    var t = i / punten;
+    var x = (1-t)*(1-t)*from[0] + 2*(1-t)*t*ctrl[0] + t*t*to[0];
+    var y = (1-t)*(1-t)*from[1] + 2*(1-t)*t*ctrl[1] + t*t*to[1];
+    coords.push([x, y]);
+  }
+  return coords;
+}
+
+const landenFilter = ['all',
+  ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]],
+  ['in', ['get', 'iso_3166_1'], ['literal', tripCountries]]
+];
+
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf',
+    sources: { landen: { type: 'vector', url: 'mapbox://mapbox.country-boundaries-v1' } },
+    layers: [
+      { id: 'achtergrond', type: 'background', paint: { 'background-color': KLEUR_LICHT } },
+      { id: 'reisland-vlak', type: 'fill', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'fill-color': KLEUR_BLAUW } },
+      { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
+    ]
+  },
+  center: [25.99521413333333, -30.14681293333334],
+  zoom: 4
+});
+
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+
+map.on('load', function() {
+
+  var transportMarkers = [];
+  var pijlMarkers = [];
+
+  segments.forEach(function(seg, idx) {
+    var cfg = transportConfig[seg.transport] || transportConfig.unknown;
+    var coords = boogCoords(seg.from, seg.to, seg.transport);
+    var sourceId = 'route-' + idx; var layerId = 'route-line-' + idx;
+    map.addSource(sourceId, { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords } } });
+    var paint = { 'line-color': KLEUR_DONKER, 'line-width': cfg.width, 'line-opacity': 0.9 };
+    if (cfg.dash && cfg.dash.length > 0) { paint['line-dasharray'] = cfg.dash; }
+    map.addLayer({ id: layerId, type: 'line', source: sourceId, layout: { 'line-join': 'round', 'line-cap': 'round' }, paint: paint });
+
+    if (cfg.svg) {
+      var iconPos = coords[Math.floor(coords.length * 0.5)];
+      var iconEl = document.createElement('div');
+      iconEl.style.cssText = 'cursor:default;user-select:none;line-height:0;';
+      var innerEl = document.createElement('div');
+      innerEl.style.cssText = 'line-height:0;';
+      if (seg.transport === 'flight') {
+        var fLatRad = ((seg.from[1] + seg.to[1]) / 2) * Math.PI / 180;
+        var fdx = (seg.to[0] - seg.from[0]) * Math.cos(fLatRad);
+        var fdy = -(seg.to[1] - seg.from[1]);
+        var fHoek = Math.atan2(fdy, fdx) * 180 / Math.PI + 90;
+        innerEl.style.transform = 'rotate(' + fHoek + 'deg)';
+      }
+      innerEl.innerHTML = svgIcon(cfg.svg, 16, true);
+      iconEl.appendChild(innerEl);
+      new mapboxgl.Marker({ element: iconEl, anchor: 'center' }).setLngLat(iconPos).addTo(map);
+      transportMarkers.push({ el: iconEl, lngLat: iconPos });
+    }
+
+    // klein richtingspijltje op autolijnen: 1 driehoek in het midden, breedte = diameter marker-rondje (7px)
+    if (seg.transport === 'car') {
+      var pijlPos = coords[Math.floor(coords.length * 0.5)];
+      var pLatRad = ((seg.from[1] + seg.to[1]) / 2) * Math.PI / 180;
+      var pdx = (seg.to[0] - seg.from[0]) * Math.cos(pLatRad);
+      var pdy = -(seg.to[1] - seg.from[1]);
+      var pHoek = Math.atan2(pdy, pdx) * 180 / Math.PI + 90;
+      var pijlEl = document.createElement('div');
+      pijlEl.style.cssText = 'line-height:0;cursor:default;user-select:none;';
+      var pijlInner = document.createElement('div');
+      pijlInner.style.cssText = 'line-height:0;transform:rotate(' + pHoek + 'deg);';
+      pijlInner.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="7" height="8" viewBox="0 0 7 8"><polygon points="3.5,0 0,8 7,8" fill="' + KLEUR_DONKER + '" stroke="' + KLEUR_DONKER + '" stroke-width="0.5" stroke-linejoin="round"/></svg>';
+      pijlEl.appendChild(pijlInner);
+      new mapboxgl.Marker({ element: pijlEl, anchor: 'center' }).setLngLat(pijlPos).addTo(map);
+      pijlMarkers.push({ el: pijlEl, lngLat: pijlPos });
+    }
+  });
+
+  var perLocatie = {};
+  stops.forEach(function(stop) {
+    var key = stop.lng.toFixed(5) + ',' + stop.lat.toFixed(5);
+    if (!perLocatie[key]) perLocatie[key] = [];
+    perLocatie[key].push(stop);
+  });
+
+  var TOON_LANDNAMEN = false;
+
+  function locKey(s){ return s.lng.toFixed(5) + ',' + s.lat.toFixed(5); }
+  var lijnRichtingen = {};
+  for (var li = 0; li < stops.length; li++) {
+    var ls = stops[li];
+    var lk = locKey(ls);
+    if (!lijnRichtingen[lk]) lijnRichtingen[lk] = [];
+    var buren = [];
+    if (li > 0) buren.push(stops[li - 1]);
+    if (li < stops.length - 1) buren.push(stops[li + 1]);
+    buren.forEach(function(b) {
+      var latRad = ls.lat * Math.PI / 180;
+      var gx = (b.lng - ls.lng) * Math.cos(latRad);
+      var gy = (b.lat - ls.lat);
+      var len = Math.sqrt(gx * gx + gy * gy);
+      if (len > 1e-9) lijnRichtingen[lk].push([gx / len, gy / len]);
+    });
+  }
+
+  var KANDIDATEN = [
+    { dir: [1, 0],   anchor: 'left',         off: [1.15, 0] },
+    { dir: [-1, 0],  anchor: 'right',        off: [-1.15, 0] },
+    { dir: [0, 1],   anchor: 'bottom',       off: [0, -1.15] },
+    { dir: [0, -1],  anchor: 'top',          off: [0, 1.15] },
+    { dir: [0.7071, 0.7071],   anchor: 'bottom-left',  off: [0.85, -0.85] },
+    { dir: [-0.7071, 0.7071],  anchor: 'bottom-right', off: [-0.85, -0.85] },
+    { dir: [0.7071, -0.7071],  anchor: 'top-left',     off: [0.85, 0.85] },
+    { dir: [-0.7071, -0.7071], anchor: 'top-right',    off: [-0.85, 0.85] }
+  ];
+  function kiesPlaatsing(vectoren) {
+    if (!vectoren || vectoren.length === 0) return { anchor: 'bottom', off: [0, -1.15] };
+    var best = KANDIDATEN[0], bestScore = -Infinity;
+    KANDIDATEN.forEach(function(c) {
+      var maxDot = -Infinity;
+      vectoren.forEach(function(v) {
+        var dot = c.dir[0] * v[0] + c.dir[1] * v[1];
+        if (dot > maxDot) maxDot = dot;
+      });
+      var score = -maxDot;
+      if (score > bestScore) { bestScore = score; best = c; }
+    });
+    return { anchor: best.anchor, off: best.off };
+  }
+
+  var dotFeatures = [];
+  var plaatsFeatures = [];
+  var landData = [];
+
+  Object.keys(perLocatie).forEach(function(key) {
+    var groep = perLocatie[key];
+    var stop = groep.find(function(s) { return s.type === 'destination'; }) || groep[0];
+    var toonLand = '';
+    groep.forEach(function(s) { if (s.toonLand && !toonLand) toonLand = s.toonLand; });
+    var isStart = groep.some(function(s){ return s.isStart; });
+    var isEind = groep.some(function(s){ return s.isEind; });
+    var isEindpunt = isStart || isEind;
+    var labels = [];
+    groep.forEach(function(s) {
+      var l = s.day_label || (s.type === 'transit' ? 'tussenstop' : s.type === 'arrival' ? 'aankomst/vertrek' : '');
+      if (l && labels.indexOf(l) === -1) labels.push(l);
+    });
+    var dagLabel = labels.join(' \u00b7 ');
+    var cfg = transportConfig[stop.transport] || transportConfig.unknown;
+    var transportLabel = cfg.label ? (svgIcon(cfg.svg, 12) + ' ' + cfg.label) : '';
+
+    dotFeatures.push({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [stop.lng, stop.lat] },
+      properties: { isEindpunt: isEindpunt, destination: stop.destination, dagLabel: dagLabel, transportLabel: transportLabel }
+    });
+
+    var bekendheid = groep.reduce(function(m, s){ return Math.max(m, s.bekendheid || 1); }, 1);
+    var bijzonderVervoer = groep.some(function(s){ return ['flight','train','ferry','cruise'].indexOf(s.transport) !== -1; });
+    var sortKey;
+    if (isEindpunt) { sortKey = 0; }
+    else if (bijzonderVervoer) { sortKey = 10 - bekendheid; }
+    else { sortKey = 20 - bekendheid; }
+
+    var plaatsing = kiesPlaatsing(lijnRichtingen[key]);
+    plaatsFeatures.push({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [stop.lng, stop.lat] },
+      properties: { naam: stop.destination, sortKey: sortKey, anchor: plaatsing.anchor, offset: plaatsing.off }
+    });
+
+    if (toonLand) {
+      landData.push({ lng: stop.lng, lat: stop.lat, toonLand: toonLand });
+    }
+  });
+
+  map.addSource('stops-dots', { type: 'geojson', data: { type: 'FeatureCollection', features: dotFeatures } });
+  map.addLayer({
+    id: 'stops-dots-layer',
+    type: 'circle',
+    source: 'stops-dots',
+    paint: {
+      'circle-radius': 3.5,
+      'circle-color': ['case', ['get', 'isEindpunt'], KLEUR_LICHT, KLEUR_DONKER],
+      'circle-stroke-color': ['case', ['get', 'isEindpunt'], KLEUR_DONKER, KLEUR_LICHT],
+      'circle-stroke-width': ['case', ['get', 'isEindpunt'], 1.5, 1]
+    }
+  });
+
+  map.addSource('plaatsnamen', { type: 'geojson', data: { type: 'FeatureCollection', features: plaatsFeatures } });
+  map.addLayer({
+    id: 'plaatsnamen-layer',
+    type: 'symbol',
+    source: 'plaatsnamen',
+    layout: {
+      'text-field': ['get', 'naam'],
+      'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+      'text-size': 13,
+      'text-anchor': ['get', 'anchor'],
+      'text-offset': ['get', 'offset'],
+      'text-allow-overlap': false,
+      'text-ignore-placement': false,
+      'symbol-sort-key': ['get', 'sortKey']
+    },
+    paint: {
+      'text-color': KLEUR_DONKER,
+      'text-halo-color': KLEUR_LICHT,
+      'text-halo-width': 2.2
+    }
+  });
+
+  map.on('click', 'stops-dots-layer', function(e) {
+    var f = e.features[0];
+    var p = f.properties;
+    new mapboxgl.Popup({ offset: 12 })
+      .setLngLat(f.geometry.coordinates)
+      .setHTML('<div class="popup-title">' + p.destination + '</div><div class="popup-dagen">' + (p.dagLabel || '') + '</div>' + (p.transportLabel ? '<div class="popup-transport">' + p.transportLabel + '</div>' : ''))
+      .addTo(map);
+  });
+  map.on('mouseenter', 'stops-dots-layer', function() { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', 'stops-dots-layer', function() { map.getCanvas().style.cursor = ''; });
+
+  if (TOON_LANDNAMEN) {
+    landData.forEach(function(d) {
+      var lab = document.createElement('div');
+      lab.className = 'land-label-marker';
+      lab.innerHTML = '<div class="stop-land">' + d.toonLand + '</div>';
+      var m = new mapboxgl.Marker({ element: lab, anchor: 'bottom', offset: [0, -30] }).setLngLat([d.lng, d.lat]).addTo(map);
+      m.getElement().style.zIndex = 1000;
+    });
+  }
+
+  function ververseTransportIconen() {
+    var obstakels = [];
+    try {
+      var namen = map.queryRenderedFeatures({ layers: ['plaatsnamen-layer'] });
+      namen.forEach(function(f) {
+        if (f.geometry && f.geometry.coordinates) {
+          var p = map.project(f.geometry.coordinates);
+          obstakels.push({ x: p.x, y: p.y - 16 });
+        }
+      });
+    } catch (e) {}
+    if (TOON_LANDNAMEN) {
+      landData.forEach(function(d) {
+        var p = map.project([d.lng, d.lat]);
+        obstakels.push({ x: p.x, y: p.y - 30 });
+      });
+    }
+    var DREMPEL = 24;
+    transportMarkers.forEach(function(tm) {
+      var p = map.project(tm.lngLat);
+      var botst = obstakels.some(function(o) {
+        var dx = p.x - o.x, dy = p.y - o.y;
+        return Math.sqrt(dx * dx + dy * dy) < DREMPEL;
+      });
+      tm.el.style.display = botst ? 'none' : '';
+    });
+
+    // autopijltje: verberg als een marker-rondje te dicht bij het pijltje ligt (komt terug bij inzoomen)
+    var DREMPEL_PIJL = 16;
+    pijlMarkers.forEach(function(pm) {
+      var pp = map.project(pm.lngLat);
+      var dichtbij = dotFeatures.some(function(f) {
+        var dp = map.project(f.geometry.coordinates);
+        var dx = pp.x - dp.x, dy = pp.y - dp.y;
+        return Math.sqrt(dx * dx + dy * dy) < DREMPEL_PIJL;
+      });
+      pm.el.style.display = dichtbij ? 'none' : '';
+    });
+  }
+  map.on('idle', ververseTransportIconen);
+
+  var bounds = new mapboxgl.LngLatBounds();
+  stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });
+  map.fitBounds(bounds, { padding: 70 });
+});
+
+var legendaEl = document.getElementById('legenda-items');
+stops.forEach(function(stop) {
+  var dagLabel = stop.day_label || (stop.type === 'transit' ? 'tussenstop' : stop.type === 'arrival' ? 'aankomst/vertrek' : '');
+  var isTransitStop = stop.type === 'transit' || stop.type === 'arrival';
+  var itemStyle = isTransitStop ? 'opacity:0.65;' : '';
+  var cfg = transportConfig[stop.transport] || transportConfig.unknown;
+  var transportSpan = (!isTransitStop && cfg.svg) ? '<span class="legenda-transport">' + svgIcon(cfg.svg, 14) + '</span>' : '';
+  legendaEl.innerHTML += '<div class="legenda-item" style="' + itemStyle + '"><span class="legenda-dag">' + dagLabel + '</span>' + transportSpan + '<span>' + stop.destination + '</span></div>';
+});
+</script>
+</body>
+</html>

@@ -366,7 +366,6 @@ map.on('load', function() {
 
   function ververseTransportIconen() {
     var obstakels = [];
-    var zichtbareCoords = {};
     try {
       // alleen daadwerkelijk zichtbare (niet-weggevallen) bestemmingsnamen tellen mee
       var namen = map.queryRenderedFeatures({ layers: ['plaatsnamen-layer'] });
@@ -374,7 +373,6 @@ map.on('load', function() {
         if (f.geometry && f.geometry.coordinates) {
           var p = map.project(f.geometry.coordinates);
           obstakels.push({ x: p.x, y: p.y - 16 });
-          zichtbareCoords[f.geometry.coordinates[0].toFixed(5) + ',' + f.geometry.coordinates[1].toFixed(5)] = true;
         }
       });
     } catch (e) {}
@@ -412,8 +410,7 @@ map.on('load', function() {
         return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
-      var key = pf.geometry.coordinates[0].toFixed(5) + ',' + pf.geometry.coordinates[1].toFixed(5);
-      if (!raakt && zichtbareCoords[key]) naamBoxen.push([x0, y0, x1, y1]);
+      if (!raakt) naamBoxen.push([x0, y0, x1, y1]);
     });
 
     // autopijltje: verberg als een marker-rondje te dicht ligt OF als het onder een zichtbare naam valt (komt terug bij inzoomen)

@@ -39,7 +39,7 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Guiyang","country":"China","toonLand":"China","days":1,"lng":106.62036,"lat":26.648916,"type":"destination","transport":"flight","bekendheid":1,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Liuzhi","country":"China","toonLand":"","days":2,"lng":105.47846,"lat":26.210238,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 2","isStart":false,"isEind":false},{"order":3,"destination":"Kaili","country":"China","toonLand":"","days":3,"lng":107.977234,"lat":26.571356,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":4,"destination":"Jianhe","country":"China","toonLand":"","days":1,"lng":108.45173,"lat":26.731258,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 7","isStart":false,"isEind":false},{"order":5,"destination":"Langdong","country":"China","toonLand":"","days":1,"lng":112.000755,"lat":21.870373,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 8","isStart":false,"isEind":false},{"order":6,"destination":"Dali","country":"China","toonLand":"","days":1,"lng":100.246574,"lat":25.59676,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 9","isStart":false,"isEind":false},{"order":7,"destination":"Jiabang","country":"China","toonLand":"","days":2,"lng":117.4429,"lat":34.44197,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 10","isStart":false,"isEind":false},{"order":8,"destination":"Huanggang","country":"China","toonLand":"","days":2,"lng":114.87859,"lat":30.45165,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 13","isStart":false,"isEind":false},{"order":9,"destination":"Congjiang","country":"China","toonLand":"","days":1,"lng":108.90281,"lat":25.756031,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 14","isStart":false,"isEind":false},{"order":10,"destination":"Chengyang","country":"China","toonLand":"","days":1,"lng":120.392654,"lat":36.30544,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 15","isStart":false,"isEind":false},{"order":11,"destination":"Ping'an","country":"China","toonLand":"","days":1,"lng":102.10735,"lat":36.500088,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 16","isStart":false,"isEind":false},{"order":12,"destination":"Yangshuo","country":"China","toonLand":"","days":3,"lng":110.49197,"lat":24.78017,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 17","isStart":false,"isEind":false},{"order":13,"destination":"Guangzhou","country":"China","toonLand":"","days":1,"lng":113.27006,"lat":23.125345,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 19","isStart":false,"isEind":true}];
+const stops = [{"order":1,"destination":"Guiyang","country":"China","toonLand":"China","days":1,"lng":106.62036,"lat":26.648916,"type":"destination","transport":"flight","bekendheid":1,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Liuzhi","country":"China","toonLand":"","days":2,"lng":105.47846,"lat":26.210238,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 2","isStart":false,"isEind":false},{"order":3,"destination":"Kaili","country":"China","toonLand":"","days":3,"lng":107.977234,"lat":26.571356,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":4,"destination":"Jianhe","country":"China","toonLand":"","days":1,"lng":108.45173,"lat":26.731258,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 7","isStart":false,"isEind":false},{"order":5,"destination":"Langdong","country":"China","toonLand":"","days":1,"lng":112.000755,"lat":21.870373,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 8","isStart":false,"isEind":false},{"order":6,"destination":"Dali","country":"China","toonLand":"","days":1,"lng":100.246574,"lat":25.59676,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 9","isStart":false,"isEind":false},{"order":7,"destination":"Jiabang","country":"China","toonLand":"","days":2,"lng":117.4429,"lat":34.44197,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 10","isStart":false,"isEind":false},{"order":8,"destination":"Huanggang","country":"China","toonLand":"","days":2,"lng":114.87859,"lat":30.45165,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 12","isStart":false,"isEind":false},{"order":9,"destination":"Congjiang","country":"China","toonLand":"","days":1,"lng":108.90281,"lat":25.756031,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 14","isStart":false,"isEind":false},{"order":10,"destination":"Chengyang","country":"China","toonLand":"","days":1,"lng":120.392654,"lat":36.30544,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 15","isStart":false,"isEind":false},{"order":11,"destination":"Ping'an","country":"China","toonLand":"","days":1,"lng":102.10735,"lat":36.500088,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 16","isStart":false,"isEind":false},{"order":12,"destination":"Yangshuo","country":"China","toonLand":"","days":3,"lng":110.49197,"lat":24.78017,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 17","isStart":false,"isEind":false},{"order":13,"destination":"Guangzhou","country":"China","toonLand":"","days":1,"lng":113.27006,"lat":23.125345,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 19","isStart":false,"isEind":true}];
 const segments = [{"from":[106.62036,26.648916],"to":[105.47846,26.210238],"transport":"car"},{"from":[105.47846,26.210238],"to":[107.977234,26.571356],"transport":"car"},{"from":[107.977234,26.571356],"to":[108.45173,26.731258],"transport":"car"},{"from":[108.45173,26.731258],"to":[112.000755,21.870373],"transport":"car"},{"from":[112.000755,21.870373],"to":[100.246574,25.59676],"transport":"car"},{"from":[100.246574,25.59676],"to":[117.4429,34.44197],"transport":"car"},{"from":[117.4429,34.44197],"to":[114.87859,30.45165],"transport":"car"},{"from":[114.87859,30.45165],"to":[108.90281,25.756031],"transport":"car"},{"from":[108.90281,25.756031],"to":[120.392654,36.30544],"transport":"car"},{"from":[120.392654,36.30544],"to":[102.10735,36.500088],"transport":"car"},{"from":[102.10735,36.500088],"to":[110.49197,24.78017],"transport":"car"},{"from":[110.49197,24.78017],"to":[113.27006,23.125345],"transport":"train"}];
 const tripCountries = ["CN"];
 
@@ -66,8 +66,9 @@ function svgIcon(pad, maat, halo) {
 
 function boogCoords(from, to, transport, punten) {
   punten = punten || 40;
-  var useBoog = (transport === 'flight' || transport === 'ferry' || transport === 'cruise');
-  if (!useBoog) {
+  var boogFactor = { flight: 0.46, ferry: 0.20, cruise: 0.20, car: 0.12 };
+  var f = boogFactor[transport] || 0;
+  if (!f) {
     var rechte = [];
     for (var k = 0; k <= punten; k++) {
       var tt = k / punten;
@@ -77,7 +78,8 @@ function boogCoords(from, to, transport, punten) {
   }
   var dx = to[0] - from[0]; var dy = to[1] - from[1];
   var dist = Math.sqrt(dx*dx + dy*dy);
-  var boogHoogte = dist * (transport === 'flight' ? 0.46 : 0.20);
+  if (dist < 1e-9) { return [[from[0], from[1]], [to[0], to[1]]]; }
+  var boogHoogte = dist * f;
   var mx = (from[0] + to[0]) / 2; var my = (from[1] + to[1]) / 2;
   var nx = -dy / dist; var ny = dx / dist;
   var ctrl = [mx + nx * boogHoogte, my + ny * boogHoogte];
@@ -222,13 +224,11 @@ map.on('load', function() {
   var plaatsFeatures = [];
   var landData = [];
 
-  // alle (ontdubbelde) stop-locaties, voor het wegduwen van namen bij nabije markers
   var locLijst = Object.keys(perLocatie).map(function(k) {
     var g = perLocatie[k];
     var st = g.find(function(s) { return s.type === 'destination'; }) || g[0];
     return { lng: st.lng, lat: st.lat };
   });
-  // richtingen naar de dichtstbijzijnde N andere markers (geo-ruimte, y = noord)
   function buurRichtingen(lng, lat, aantal) {
     var latRad = lat * Math.PI / 180;
     var lijst = [];
@@ -242,7 +242,6 @@ map.on('load', function() {
     return lijst.slice(0, aantal).map(function(x) { return x.v; });
   }
 
-  // kaartmidden (bounding-box) + grootste afstand, om namen van randstops naar binnen te richten (mobiel)
   var _lngs = locLijst.map(function(p) { return p.lng; });
   var _lats = locLijst.map(function(p) { return p.lat; });
   var midLng = (Math.min.apply(null, _lngs) + Math.max.apply(null, _lngs)) / 2;
@@ -284,10 +283,8 @@ map.on('load', function() {
     else if (bijzonderVervoer) { sortKey = 10 - bekendheid; }
     else { sortKey = 20 - bekendheid; }
 
-    // plaats de naam weg van zowel de aangrenzende route-lijnen als de dichtstbijzijnde andere markers
     var vermijd = (lijnRichtingen[key] || []).slice();
     buurRichtingen(stop.lng, stop.lat, 3).forEach(function(v) { vermijd.push(v); });
-    // randstop (buitenste ~40%): richt de naam naar binnen, zodat hij niet over de kaartrand steekt (mobiel)
     var uitDx = (stop.lng - midLng) * Math.cos(midLatRad);
     var uitDy = (stop.lat - midLat);
     var uitLen = Math.sqrt(uitDx * uitDx + uitDy * uitDy);
@@ -319,7 +316,6 @@ map.on('load', function() {
     }
   });
 
-  // 3. BESTEMMINGSNAMEN als symbol-layer MET botsingdetectie (NA de rondjes -> altijd erboven)
   map.addSource('plaatsnamen', { type: 'geojson', generateId: true, data: { type: 'FeatureCollection', features: plaatsFeatures } });
   map.addLayer({
     id: 'plaatsnamen-layer',
@@ -367,7 +363,6 @@ map.on('load', function() {
   function ververseTransportIconen() {
     var obstakels = [];
     try {
-      // alleen daadwerkelijk zichtbare (niet-weggevallen) bestemmingsnamen tellen mee
       var namen = map.queryRenderedFeatures({ layers: ['plaatsnamen-layer'] });
       namen.forEach(function(f) {
         if (f.geometry && f.geometry.coordinates) {
@@ -392,7 +387,6 @@ map.on('load', function() {
       tm.el.style.display = botst ? 'none' : '';
     });
 
-    // bestemmingsnaam verbergen als zijn tekst over een ANDER rondje valt; verzamel zichtbare naam-vlakken
     var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
     var naamBoxen = [];
     plaatsFeatures.forEach(function(pf, idx) {
@@ -406,14 +400,13 @@ map.on('load', function() {
       var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
       var x1 = x0 + w, y1 = y0 + h;
       var raakt = markerPx.some(function(mp, j) {
-        if (j === idx) return false; // eigen rondje overslaan
+        if (j === idx) return false;
         return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
       if (!raakt) naamBoxen.push([x0, y0, x1, y1]);
     });
 
-    // autopijltje: verberg als een marker-rondje te dicht ligt OF als het onder een zichtbare naam valt (komt terug bij inzoomen)
     var DREMPEL_PIJL = 16;
     pijlMarkers.forEach(function(pm) {
       var pp = map.project(pm.lngLat);

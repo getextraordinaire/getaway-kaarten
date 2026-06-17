@@ -66,8 +66,9 @@ function svgIcon(pad, maat, halo) {
 
 function boogCoords(from, to, transport, punten) {
   punten = punten || 40;
-  var useBoog = (transport === 'flight' || transport === 'ferry' || transport === 'cruise');
-  if (!useBoog) {
+  var boogFactor = { flight: 0.46, ferry: 0.20, cruise: 0.20, car: 0.12 };
+  var f = boogFactor[transport] || 0;
+  if (!f) {
     var rechte = [];
     for (var k = 0; k <= punten; k++) {
       var tt = k / punten;
@@ -77,7 +78,8 @@ function boogCoords(from, to, transport, punten) {
   }
   var dx = to[0] - from[0]; var dy = to[1] - from[1];
   var dist = Math.sqrt(dx*dx + dy*dy);
-  var boogHoogte = dist * (transport === 'flight' ? 0.46 : 0.20);
+  if (dist < 1e-9) { return [[from[0], from[1]], [to[0], to[1]]]; }
+  var boogHoogte = dist * f;
   var mx = (from[0] + to[0]) / 2; var my = (from[1] + to[1]) / 2;
   var nx = -dy / dist; var ny = dx / dist;
   var ctrl = [mx + nx * boogHoogte, my + ny * boogHoogte];
@@ -222,13 +224,11 @@ map.on('load', function() {
   var plaatsFeatures = [];
   var landData = [];
 
-  // alle (ontdubbelde) stop-locaties, voor het wegduwen van namen bij nabije markers
   var locLijst = Object.keys(perLocatie).map(function(k) {
     var g = perLocatie[k];
     var st = g.find(function(s) { return s.type === 'destination'; }) || g[0];
     return { lng: st.lng, lat: st.lat };
   });
-  // richtingen naar de dichtstbijzijnde N andere markers (geo-ruimte, y = noord)
   function buurRichtingen(lng, lat, aantal) {
     var latRad = lat * Math.PI / 180;
     var lijst = [];
@@ -242,7 +242,6 @@ map.on('load', function() {
     return lijst.slice(0, aantal).map(function(x) { return x.v; });
   }
 
-  // kaartmidden (bounding-box) + grootste afstand, om namen van randstops naar binnen te richten (mobiel)
   var _lngs = locLijst.map(function(p) { return p.lng; });
   var _lats = locLijst.map(function(p) { return p.lat; });
   var midLng = (Math.min.apply(null, _lngs) + Math.max.apply(null, _lngs)) / 2;
@@ -284,10 +283,8 @@ map.on('load', function() {
     else if (bijzonderVervoer) { sortKey = 10 - bekendheid; }
     else { sortKey = 20 - bekendheid; }
 
-    // plaats de naam weg van zowel de aangrenzende route-lijnen als de dichtstbijzijnde andere markers
     var vermijd = (lijnRichtingen[key] || []).slice();
     buurRichtingen(stop.lng, stop.lat, 3).forEach(function(v) { vermijd.push(v); });
-    // randstop (buitenste ~40%): richt de naam naar binnen, zodat hij niet over de kaartrand steekt (mobiel)
     var uitDx = (stop.lng - midLng) * Math.cos(midLatRad);
     var uitDy = (stop.lat - midLat);
     var uitLen = Math.sqrt(uitDx * uitDx + uitDy * uitDy);
@@ -319,7 +316,6 @@ map.on('load', function() {
     }
   });
 
-  // 3. BESTEMMINGSNAMEN als symbol-layer MET botsingdetectie (NA de rondjes -> altijd erboven)
   map.addSource('plaatsnamen', { type: 'geojson', generateId: true, data: { type: 'FeatureCollection', features: plaatsFeatures } });
   map.addLayer({
     id: 'plaatsnamen-layer',
@@ -367,7 +363,6 @@ map.on('load', function() {
   function ververseTransportIconen() {
     var obstakels = [];
     try {
-      // alleen daadwerkelijk zichtbare (niet-weggevallen) bestemmingsnamen tellen mee
       var namen = map.queryRenderedFeatures({ layers: ['plaatsnamen-layer'] });
       namen.forEach(function(f) {
         if (f.geometry && f.geometry.coordinates) {
@@ -392,7 +387,6 @@ map.on('load', function() {
       tm.el.style.display = botst ? 'none' : '';
     });
 
-    // bestemmingsnaam verbergen als zijn tekst over een ANDER rondje valt; verzamel zichtbare naam-vlakken
     var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
     var naamBoxen = [];
     plaatsFeatures.forEach(function(pf, idx) {
@@ -406,14 +400,13 @@ map.on('load', function() {
       var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
       var x1 = x0 + w, y1 = y0 + h;
       var raakt = markerPx.some(function(mp, j) {
-        if (j === idx) return false; // eigen rondje overslaan
+        if (j === idx) return false;
         return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
       if (!raakt) naamBoxen.push([x0, y0, x1, y1]);
     });
 
-    // autopijltje: verberg als een marker-rondje te dicht ligt OF als het onder een zichtbare naam valt (komt terug bij inzoomen)
     var DREMPEL_PIJL = 16;
     pijlMarkers.forEach(function(pm) {
       var pp = map.project(pm.lngLat);

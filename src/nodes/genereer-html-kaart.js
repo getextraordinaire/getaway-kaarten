@@ -156,7 +156,7 @@ function boogCoords(from, to, transport, punten) {
   }
   var dx = to[0] - from[0]; var dy = to[1] - from[1];
   var dist = Math.sqrt(dx*dx + dy*dy);
-  var boogHoogte = dist * (transport === 'flight' ? 0.40 : 0.20);
+  var boogHoogte = dist * (transport === 'flight' ? 0.46 : 0.20);
   var mx = (from[0] + to[0]) / 2; var my = (from[1] + to[1]) / 2;
   var nx = -dy / dist; var ny = dx / dist;
   var ctrl = [mx + nx * boogHoogte, my + ny * boogHoogte];
@@ -197,6 +197,7 @@ map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 map.on('load', function() {
 
   var transportMarkers = [];
+  var pijlMarkers = [];
 
   segments.forEach(function(seg, idx) {
     var cfg = transportConfig[seg.transport] || transportConfig.unknown;
@@ -224,6 +225,23 @@ map.on('load', function() {
       iconEl.appendChild(innerEl);
       new mapboxgl.Marker({ element: iconEl, anchor: 'center' }).setLngLat(iconPos).addTo(map);
       transportMarkers.push({ el: iconEl, lngLat: iconPos });
+    }
+
+    // klein richtingspijltje op autolijnen: 1 driehoek in het midden, breedte = diameter marker-rondje (7px)
+    if (seg.transport === 'car') {
+      var pijlPos = coords[Math.floor(coords.length * 0.5)];
+      var pLatRad = ((seg.from[1] + seg.to[1]) / 2) * Math.PI / 180;
+      var pdx = (seg.to[0] - seg.from[0]) * Math.cos(pLatRad);
+      var pdy = -(seg.to[1] - seg.from[1]);
+      var pHoek = Math.atan2(pdy, pdx) * 180 / Math.PI + 90;
+      var pijlEl = document.createElement('div');
+      pijlEl.style.cssText = 'line-height:0;cursor:default;user-select:none;';
+      var pijlInner = document.createElement('div');
+      pijlInner.style.cssText = 'line-height:0;transform:rotate(' + pHoek + 'deg);';
+      pijlInner.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="9" height="10" viewBox="-1 -1 9 10"><polygon points="3.5,0 0,8 7,8" fill="' + KLEUR_DONKER + '" stroke="' + KLEUR_DONKER + '" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+      pijlEl.appendChild(pijlInner);
+      new mapboxgl.Marker({ element: pijlEl, anchor: 'center' }).setLngLat(pijlPos).addTo(map);
+      pijlMarkers.push({ el: pijlEl, lngLat: pijlPos });
     }
   });
 
@@ -255,17 +273,17 @@ map.on('load', function() {
   }
 
   var KANDIDATEN = [
-    { dir: [1, 0],   anchor: 'left',         off: [1.15, 0] },
-    { dir: [-1, 0],  anchor: 'right',        off: [-1.15, 0] },
-    { dir: [0, 1],   anchor: 'bottom',       off: [0, -1.15] },
-    { dir: [0, -1],  anchor: 'top',          off: [0, 1.15] },
-    { dir: [0.7071, 0.7071],   anchor: 'bottom-left',  off: [0.85, -0.85] },
-    { dir: [-0.7071, 0.7071],  anchor: 'bottom-right', off: [-0.85, -0.85] },
-    { dir: [0.7071, -0.7071],  anchor: 'top-left',     off: [0.85, 0.85] },
-    { dir: [-0.7071, -0.7071], anchor: 'top-right',    off: [-0.85, 0.85] }
+    { dir: [1, 0],   anchor: 'left',         off: [0.75, 0] },
+    { dir: [-1, 0],  anchor: 'right',        off: [-0.75, 0] },
+    { dir: [0, 1],   anchor: 'bottom',       off: [0, -0.75] },
+    { dir: [0, -1],  anchor: 'top',          off: [0, 0.75] },
+    { dir: [0.7071, 0.7071],   anchor: 'bottom-left',  off: [0.55, -0.55] },
+    { dir: [-0.7071, 0.7071],  anchor: 'bottom-right', off: [-0.55, -0.55] },
+    { dir: [0.7071, -0.7071],  anchor: 'top-left',     off: [0.55, 0.55] },
+    { dir: [-0.7071, -0.7071], anchor: 'top-right',    off: [-0.55, 0.55] }
   ];
   function kiesPlaatsing(vectoren) {
-    if (!vectoren || vectoren.length === 0) return { anchor: 'bottom', off: [0, -1.15] };
+    if (!vectoren || vectoren.length === 0) return { anchor: 'bottom', off: [0, -0.75] };
     var best = KANDIDATEN[0], bestScore = -Infinity;
     KANDIDATEN.forEach(function(c) {
       var maxDot = -Infinity;
@@ -282,6 +300,38 @@ map.on('load', function() {
   var dotFeatures = [];
   var plaatsFeatures = [];
   var landData = [];
+
+  // alle (ontdubbelde) stop-locaties, voor het wegduwen van namen bij nabije markers
+  var locLijst = Object.keys(perLocatie).map(function(k) {
+    var g = perLocatie[k];
+    var st = g.find(function(s) { return s.type === 'destination'; }) || g[0];
+    return { lng: st.lng, lat: st.lat };
+  });
+  // richtingen naar de dichtstbijzijnde N andere markers (geo-ruimte, y = noord)
+  function buurRichtingen(lng, lat, aantal) {
+    var latRad = lat * Math.PI / 180;
+    var lijst = [];
+    locLijst.forEach(function(p) {
+      var gx = (p.lng - lng) * Math.cos(latRad);
+      var gy = (p.lat - lat);
+      var d = Math.sqrt(gx * gx + gy * gy);
+      if (d > 1e-9) lijst.push({ d: d, v: [gx / d, gy / d] });
+    });
+    lijst.sort(function(a, b) { return a.d - b.d; });
+    return lijst.slice(0, aantal).map(function(x) { return x.v; });
+  }
+
+  // kaartmidden (bounding-box) + grootste afstand, om namen van randstops naar binnen te richten (mobiel)
+  var _lngs = locLijst.map(function(p) { return p.lng; });
+  var _lats = locLijst.map(function(p) { return p.lat; });
+  var midLng = (Math.min.apply(null, _lngs) + Math.max.apply(null, _lngs)) / 2;
+  var midLat = (Math.min.apply(null, _lats) + Math.max.apply(null, _lats)) / 2;
+  var midLatRad = midLat * Math.PI / 180;
+  var maxAfstand = 0;
+  locLijst.forEach(function(p) {
+    var d = Math.sqrt(Math.pow((p.lng - midLng) * Math.cos(midLatRad), 2) + Math.pow(p.lat - midLat, 2));
+    if (d > maxAfstand) maxAfstand = d;
+  });
 
   Object.keys(perLocatie).forEach(function(key) {
     var groep = perLocatie[key];
@@ -313,7 +363,17 @@ map.on('load', function() {
     else if (bijzonderVervoer) { sortKey = 10 - bekendheid; }
     else { sortKey = 20 - bekendheid; }
 
-    var plaatsing = kiesPlaatsing(lijnRichtingen[key]);
+    // plaats de naam weg van zowel de aangrenzende route-lijnen als de dichtstbijzijnde andere markers
+    var vermijd = (lijnRichtingen[key] || []).slice();
+    buurRichtingen(stop.lng, stop.lat, 3).forEach(function(v) { vermijd.push(v); });
+    // randstop (buitenste ~40%): richt de naam naar binnen, zodat hij niet over de kaartrand steekt (mobiel)
+    var uitDx = (stop.lng - midLng) * Math.cos(midLatRad);
+    var uitDy = (stop.lat - midLat);
+    var uitLen = Math.sqrt(uitDx * uitDx + uitDy * uitDy);
+    if (maxAfstand > 0 && uitLen > 0.6 * maxAfstand) {
+      vermijd.push([uitDx / uitLen, uitDy / uitLen]);
+    }
+    var plaatsing = kiesPlaatsing(vermijd);
     plaatsFeatures.push({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [stop.lng, stop.lat] },
@@ -338,7 +398,8 @@ map.on('load', function() {
     }
   });
 
-  map.addSource('plaatsnamen', { type: 'geojson', data: { type: 'FeatureCollection', features: plaatsFeatures } });
+  // 3. BESTEMMINGSNAMEN als symbol-layer MET botsingdetectie (NA de rondjes -> altijd erboven)
+  map.addSource('plaatsnamen', { type: 'geojson', generateId: true, data: { type: 'FeatureCollection', features: plaatsFeatures } });
   map.addLayer({
     id: 'plaatsnamen-layer',
     type: 'symbol',
@@ -356,7 +417,8 @@ map.on('load', function() {
     paint: {
       'text-color': KLEUR_DONKER,
       'text-halo-color': KLEUR_LICHT,
-      'text-halo-width': 2.2
+      'text-halo-width': 2.2,
+      'text-opacity': ['case', ['boolean', ['feature-state', 'verborgen'], false], 0, 1]
     }
   });
 
@@ -384,6 +446,7 @@ map.on('load', function() {
   function ververseTransportIconen() {
     var obstakels = [];
     try {
+      // alleen daadwerkelijk zichtbare (niet-weggevallen) bestemmingsnamen tellen mee
       var namen = map.queryRenderedFeatures({ layers: ['plaatsnamen-layer'] });
       namen.forEach(function(f) {
         if (f.geometry && f.geometry.coordinates) {
@@ -406,6 +469,42 @@ map.on('load', function() {
         return Math.sqrt(dx * dx + dy * dy) < DREMPEL;
       });
       tm.el.style.display = botst ? 'none' : '';
+    });
+
+    // bestemmingsnaam verbergen als zijn tekst over een ANDER rondje valt; verzamel zichtbare naam-vlakken
+    var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
+    var naamBoxen = [];
+    plaatsFeatures.forEach(function(pf, idx) {
+      var sp = map.project(pf.geometry.coordinates);
+      var off = pf.properties.offset || [0, 0];
+      var anchor = pf.properties.anchor || 'bottom';
+      var naam = pf.properties.naam || '';
+      var w = naam.length * 7.2, h = 15;
+      var ox = sp.x + off[0] * 13, oy = sp.y + off[1] * 13;
+      var x0 = anchor.indexOf('left') >= 0 ? ox : anchor.indexOf('right') >= 0 ? ox - w : ox - w / 2;
+      var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
+      var x1 = x0 + w, y1 = y0 + h;
+      var raakt = markerPx.some(function(mp, j) {
+        if (j === idx) return false; // eigen rondje overslaan
+        return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+      });
+      map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
+      if (!raakt) naamBoxen.push([x0, y0, x1, y1]);
+    });
+
+    // autopijltje: verberg als een marker-rondje te dicht ligt OF als het onder een zichtbare naam valt (komt terug bij inzoomen)
+    var DREMPEL_PIJL = 16;
+    pijlMarkers.forEach(function(pm) {
+      var pp = map.project(pm.lngLat);
+      var dichtbijDot = dotFeatures.some(function(f) {
+        var dp = map.project(f.geometry.coordinates);
+        var dx = pp.x - dp.x, dy = pp.y - dp.y;
+        return Math.sqrt(dx * dx + dy * dy) < DREMPEL_PIJL;
+      });
+      var onderNaam = naamBoxen.some(function(b) {
+        return pp.x > b[0] - 2 && pp.x < b[2] + 2 && pp.y > b[1] - 2 && pp.y < b[3] + 2;
+      });
+      pm.el.style.display = (dichtbijDot || onderNaam) ? 'none' : '';
     });
   }
   map.on('idle', ververseTransportIconen);

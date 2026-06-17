@@ -39,8 +39,8 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Bogotá","country":"Colombia","toonLand":"Colombia","days":2,"lng":-74.083633,"lat":4.653382,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1-2","isStart":true,"isEind":false},{"order":2,"destination":"Salento","country":"Colombia","toonLand":"","days":3,"lng":-75.56967,"lat":4.637618,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 3-5","isStart":false,"isEind":false},{"order":3,"destination":"Medellín","country":"Colombia","toonLand":"","days":3,"lng":-75.56733,"lat":6.250937,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 6-8","isStart":false,"isEind":false},{"order":4,"destination":"Tayrona National Park","country":"Colombia","toonLand":"","days":2,"lng":-75.179756,"lat":39.865954,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 9-10","isStart":false,"isEind":false},{"order":5,"destination":"Cartagena","country":"Colombia","toonLand":"","days":3,"lng":-75.54878,"lat":10.422792,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 11-13","isStart":false,"isEind":true}];
-const segments = [{"from":[-74.083633,4.653382],"to":[-75.56967,4.637618],"transport":"flight"},{"from":[-75.56967,4.637618],"to":[-75.56733,6.250937],"transport":"car"},{"from":[-75.56733,6.250937],"to":[-75.179756,39.865954],"transport":"flight"},{"from":[-75.179756,39.865954],"to":[-75.54878,10.422792],"transport":"car"}];
+const stops = [{"order":1,"destination":"Bogotá","country":"Colombia","toonLand":"Colombia","days":2,"lng":-74.083633,"lat":4.653382,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1-2","isStart":true,"isEind":false},{"order":2,"destination":"Salento","country":"Colombia","toonLand":"","days":3,"lng":-75.56967,"lat":4.637618,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 3-5","isStart":false,"isEind":false},{"order":3,"destination":"Medellín","country":"Colombia","toonLand":"","days":3,"lng":-75.56733,"lat":6.250937,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 6-8","isStart":false,"isEind":false},{"order":4,"destination":"Tayrona National Park","country":"Colombia","toonLand":"","days":2,"lng":-75.179756,"lat":39.865954,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 9-10","isStart":false,"isEind":false},{"order":5,"destination":"Cartagena","country":"Colombia","toonLand":"","days":3,"lng":-75.54878,"lat":10.422792,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 11-13","isStart":false,"isEind":false},{"order":6,"destination":"Cartagena","country":"Colombia","toonLand":"","days":0,"lng":-75.54878,"lat":10.422792,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 14","isStart":false,"isEind":true}];
+const segments = [{"from":[-74.083633,4.653382],"to":[-75.56967,4.637618],"transport":"flight"},{"from":[-75.56967,4.637618],"to":[-75.56733,6.250937],"transport":"car"},{"from":[-75.56733,6.250937],"to":[-75.179756,39.865954],"transport":"flight"},{"from":[-75.179756,39.865954],"to":[-75.54878,10.422792],"transport":"car"},{"from":[-75.54878,10.422792],"to":[-75.54878,10.422792],"transport":"car"}];
 const tripCountries = ["CO","US"];
 
 const KLEUR_LICHT = '#F9FBFB';
@@ -108,7 +108,7 @@ const map = new mapboxgl.Map({
       { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
     ]
   },
-  center: [-75.1898338, 13.166136600000002],
+  center: [-75.24965816666666, 12.708912500000002],
   zoom: 4
 });
 

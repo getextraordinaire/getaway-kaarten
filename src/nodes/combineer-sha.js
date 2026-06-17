@@ -4,8 +4,7 @@ const uploadItems = $('Bouw upload body').all();
 return shaItems.map(function(shaItem, idx) {
   const uploadItem = uploadItems[idx] || { json: {} };
 
-  // SHA is aanwezig als statusCode 200 en sha veld gevuld
-  // Bij 404 of lege response is sha null
+  // SHA aanwezig => bestand bestaat al (update). Geen sha => nieuw bestand (create).
   let sha = null;
   try {
     if (shaItem.json && shaItem.json.sha && shaItem.json.sha !== 'undefined') {
@@ -14,6 +13,11 @@ return shaItems.map(function(shaItem, idx) {
   } catch(e) { sha = null; }
 
   const bestandsnaam = uploadItem.json.bestandsnaam || '';
+  const body = {
+    message: uploadItem.json.upload_message,
+    content: uploadItem.json.base64content
+  };
+  if (sha) { body.sha = sha; }
 
   return {
     json: {
@@ -21,11 +25,8 @@ return shaItems.map(function(shaItem, idx) {
       route: uploadItem.json.route,
       legenda: uploadItem.json.legenda,
       bestandsnaam: bestandsnaam,
-      base64content: uploadItem.json.base64content,
-      upload_message: uploadItem.json.upload_message,
-      delete_message: 'Verwijder voor herplaatsing: ' + bestandsnaam,
-      delete_sha: sha || '',
-      has_sha: sha ? true : false
+      has_sha: sha ? true : false,
+      upload_body_json: JSON.stringify(body)
     }
   };
 });

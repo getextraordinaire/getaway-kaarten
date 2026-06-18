@@ -39,8 +39,8 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Kaapstad","country":"South Africa","toonLand":"Zuid-Afrika","days":2,"lng":18.420296,"lat":-33.922497,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1-2","isStart":true,"isEind":false},{"order":2,"destination":"West Coast","country":"South Africa","toonLand":"","days":1,"lng":17.884373,"lat":-29.66567,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 3","isStart":false,"isEind":false},{"order":3,"destination":"Oranje Rivier","country":"Namibia","toonLand":"Namibië","days":1,"lng":17.288762,"lat":-21.20101,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":4,"destination":"Fish River Canyon","country":"Namibia","toonLand":"","days":1,"lng":17.288762,"lat":-21.20101,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 5","isStart":false,"isEind":false},{"order":5,"destination":"Namib woestijn","country":"Namibia","toonLand":"","days":2,"lng":17.288762,"lat":-21.20101,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 6-7","isStart":false,"isEind":false},{"order":6,"destination":"Sossusvlei","country":"Namibia","toonLand":"","days":1,"lng":17.288762,"lat":-21.20101,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 8","isStart":false,"isEind":false},{"order":7,"destination":"Swakopmund","country":"Namibia","toonLand":"","days":2,"lng":14.539054,"lat":-22.696565,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 9-10","isStart":false,"isEind":false},{"order":8,"destination":"Spitzkoppe","country":"Namibia","toonLand":"","days":1,"lng":17.288762,"lat":-21.20101,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 11","isStart":false,"isEind":false},{"order":9,"destination":"Etosha Nationaal Park","country":"Namibia","toonLand":"","days":2,"lng":17.288762,"lat":-21.20101,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 12-13","isStart":false,"isEind":false},{"order":10,"destination":"Divundu (Caprivi)","country":"Namibia","toonLand":"","days":1,"lng":21.548803,"lat":-18.099276,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 14","isStart":false,"isEind":false},{"order":11,"destination":"Okavango Delta","country":"Botswana","toonLand":"Botswana","days":2,"lng":24.316265,"lat":-22.212943,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 15-16","isStart":false,"isEind":false},{"order":12,"destination":"Maun","country":"Botswana","toonLand":"","days":1,"lng":23.42207,"lat":-19.988626,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 17","isStart":false,"isEind":false},{"order":13,"destination":"Makgadikgadi Pans","country":"Botswana","toonLand":"","days":1,"lng":24.316265,"lat":-22.212943,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 18","isStart":false,"isEind":false},{"order":14,"destination":"Chobe Nationaal Park","country":"Botswana","toonLand":"","days":0,"lng":25.156546,"lat":-17.799239,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 19","isStart":false,"isEind":false},{"order":15,"destination":"Victoria Falls","country":"Zimbabwe","toonLand":"Zimbabwe","days":2,"lng":25.826298,"lat":-17.941389,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 19-20","isStart":false,"isEind":false},{"order":16,"destination":"Hwange Nationaal Park","country":"Zimbabwe","toonLand":"","days":1,"lng":26.50795,"lat":-18.372772,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 21","isStart":false,"isEind":false},{"order":17,"destination":"Bulawayo","country":"Zimbabwe","toonLand":"","days":0,"lng":28.588706,"lat":-20.15606,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 22","isStart":false,"isEind":false},{"order":18,"destination":"Matobo Nationaal Park","country":"Zimbabwe","toonLand":"","days":1,"lng":28.471157,"lat":-20.412101,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 22","isStart":false,"isEind":false},{"order":19,"destination":"Limpopo","country":"Botswana","toonLand":"","days":1,"lng":24.316265,"lat":-22.212943,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 23","isStart":false,"isEind":false},{"order":20,"destination":"Johannesburg","country":"South Africa","toonLand":"","days":1,"lng":28.042114,"lat":-26.204678,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 24","isStart":false,"isEind":true}];
-const segments = [{"from":[18.420296,-33.922497],"to":[17.884373,-29.66567],"transport":"car"},{"from":[17.884373,-29.66567],"to":[17.288762,-21.20101],"transport":"car"},{"from":[17.288762,-21.20101],"to":[17.288762,-21.20101],"transport":"car"},{"from":[17.288762,-21.20101],"to":[17.288762,-21.20101],"transport":"car"},{"from":[17.288762,-21.20101],"to":[17.288762,-21.20101],"transport":"car"},{"from":[17.288762,-21.20101],"to":[14.539054,-22.696565],"transport":"car"},{"from":[14.539054,-22.696565],"to":[17.288762,-21.20101],"transport":"car"},{"from":[17.288762,-21.20101],"to":[17.288762,-21.20101],"transport":"car"},{"from":[17.288762,-21.20101],"to":[21.548803,-18.099276],"transport":"car"},{"from":[21.548803,-18.099276],"to":[24.316265,-22.212943],"transport":"car"},{"from":[24.316265,-22.212943],"to":[23.42207,-19.988626],"transport":"car"},{"from":[23.42207,-19.988626],"to":[24.316265,-22.212943],"transport":"car"},{"from":[24.316265,-22.212943],"to":[25.156546,-17.799239],"transport":"car"},{"from":[25.156546,-17.799239],"to":[25.826298,-17.941389],"transport":"car"},{"from":[25.826298,-17.941389],"to":[26.50795,-18.372772],"transport":"car"},{"from":[26.50795,-18.372772],"to":[28.588706,-20.15606],"transport":"car"},{"from":[28.588706,-20.15606],"to":[28.471157,-20.412101],"transport":"car"},{"from":[28.471157,-20.412101],"to":[24.316265,-22.212943],"transport":"car"},{"from":[24.316265,-22.212943],"to":[28.042114,-26.204678],"transport":"car"}];
+const stops = [{"order":1,"destination":"Kaapstad","country":"South Africa","toonLand":"Zuid-Afrika","days":2,"lng":18.420296,"lat":-33.922497,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1-2","isStart":true,"isEind":false},{"order":2,"destination":"West Coast","country":"South Africa","toonLand":"","days":1,"lng":17.884373,"lat":-29.66567,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 3","isStart":false,"isEind":false},{"order":7,"destination":"Swakopmund","country":"Namibia","toonLand":"Namibië","days":2,"lng":14.539054,"lat":-22.696565,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 9-10","isStart":false,"isEind":false},{"order":10,"destination":"Divundu (Caprivi)","country":"Namibia","toonLand":"","days":1,"lng":21.548803,"lat":-18.099276,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 14","isStart":false,"isEind":false},{"order":12,"destination":"Maun","country":"Botswana","toonLand":"Botswana","days":1,"lng":23.42207,"lat":-19.988626,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 17","isStart":false,"isEind":false},{"order":14,"destination":"Chobe Nationaal Park","country":"Botswana","toonLand":"","days":0,"lng":25.156546,"lat":-17.799239,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 19","isStart":false,"isEind":false},{"order":15,"destination":"Victoria Falls","country":"Zimbabwe","toonLand":"Zimbabwe","days":2,"lng":25.826298,"lat":-17.941389,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 19-20","isStart":false,"isEind":false},{"order":16,"destination":"Hwange Nationaal Park","country":"Zimbabwe","toonLand":"","days":1,"lng":26.50795,"lat":-18.372772,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 21","isStart":false,"isEind":false},{"order":17,"destination":"Bulawayo","country":"Zimbabwe","toonLand":"","days":0,"lng":28.588706,"lat":-20.15606,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 22","isStart":false,"isEind":false},{"order":18,"destination":"Matobo Nationaal Park","country":"Zimbabwe","toonLand":"","days":1,"lng":28.471157,"lat":-20.412101,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 22","isStart":false,"isEind":false},{"order":20,"destination":"Johannesburg","country":"South Africa","toonLand":"","days":0,"lng":28.042114,"lat":-26.204678,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 24","isStart":false,"isEind":true}];
+const segments = [{"from":[18.420296,-33.922497],"to":[17.884373,-29.66567],"transport":"car"},{"from":[17.884373,-29.66567],"to":[14.539054,-22.696565],"transport":"car"},{"from":[14.539054,-22.696565],"to":[21.548803,-18.099276],"transport":"car"},{"from":[21.548803,-18.099276],"to":[23.42207,-19.988626],"transport":"car"},{"from":[23.42207,-19.988626],"to":[25.156546,-17.799239],"transport":"car"},{"from":[25.156546,-17.799239],"to":[25.826298,-17.941389],"transport":"car"},{"from":[25.826298,-17.941389],"to":[26.50795,-18.372772],"transport":"car"},{"from":[26.50795,-18.372772],"to":[28.588706,-20.15606],"transport":"car"},{"from":[28.588706,-20.15606],"to":[28.471157,-20.412101],"transport":"car"},{"from":[28.471157,-20.412101],"to":[28.042114,-26.204678],"transport":"car"}];
 const tripCountries = ["ZA","NA","BW","ZW"];
 
 const KLEUR_LICHT = '#F9FBFB';
@@ -110,7 +110,7 @@ const map = new mapboxgl.Map({
       { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
     ]
   },
-  center: [21.7544367, -21.9551881],
+  center: [23.49157881818182, -22.296261181818185],
   zoom: 4
 });
 
@@ -122,9 +122,17 @@ map.on('load', function() {
   var transportMarkers = [];
   var pijlMarkers = [];
 
+  // car-lijnen alleen buigen als er ook een retoursegment bestaat (heen-en-weer naar dezelfde plek);
+  // gewone enkele ritten blijven recht.
+  function _ck(pt){ return pt[0].toFixed(4) + ',' + pt[1].toFixed(4); }
+  var _segSet = {};
+  segments.forEach(function(s){ _segSet[_ck(s.from) + '>' + _ck(s.to)] = true; });
+  function heeftRetour(seg){ return !!_segSet[_ck(seg.to) + '>' + _ck(seg.from)]; }
+
   segments.forEach(function(seg, idx) {
     var cfg = transportConfig[seg.transport] || transportConfig.unknown;
-    var coords = boogCoords(seg.from, seg.to, seg.transport);
+    var _bowT = (seg.transport === 'car' && !heeftRetour(seg)) ? 'unknown' : seg.transport;
+    var coords = boogCoords(seg.from, seg.to, _bowT);
     var sourceId = 'route-' + idx; var layerId = 'route-line-' + idx;
     map.addSource(sourceId, { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords } } });
     var paint = { 'line-color': KLEUR_DONKER, 'line-width': cfg.width, 'line-opacity': 0.9 };
@@ -387,21 +395,29 @@ map.on('load', function() {
       tm.el.style.display = botst ? 'none' : '';
     });
 
-    var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
+    var markerPx = dotFeatures.map(function(f, j) {
+      var pr = (plaatsFeatures[j] && plaatsFeatures[j].properties) ? (plaatsFeatures[j].properties.sortKey || 99) : 99;
+      var pt = map.project(f.geometry.coordinates);
+      return { x: pt.x, y: pt.y, prio: pr };
+    });
     var naamBoxen = [];
     plaatsFeatures.forEach(function(pf, idx) {
       var sp = map.project(pf.geometry.coordinates);
       var off = pf.properties.offset || [0, 0];
       var anchor = pf.properties.anchor || 'bottom';
       var naam = pf.properties.naam || '';
+      var mijnPrio = pf.properties.sortKey || 99;
       var w = naam.length * 7.2, h = 15;
       var ox = sp.x + off[0] * 13, oy = sp.y + off[1] * 13;
       var x0 = anchor.indexOf('left') >= 0 ? ox : anchor.indexOf('right') >= 0 ? ox - w : ox - w / 2;
       var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
       var x1 = x0 + w, y1 = y0 + h;
+      // verberg een naam alleen als de tekst over de stip van een BELANGRIJKER punt valt
+      // (niet wederzijds), zodat in dichte clusters niet alle namen tegelijk verdwijnen
       var raakt = markerPx.some(function(mp, j) {
-        if (j === idx) return false;
-        return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+        if (j === idx) return false; // eigen rondje overslaan
+        var overlapt = mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+        return overlapt && mp.prio < mijnPrio;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
       if (!raakt) naamBoxen.push([x0, y0, x1, y1]);
@@ -425,7 +441,7 @@ map.on('load', function() {
 
   var bounds = new mapboxgl.LngLatBounds();
   stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });
-  map.fitBounds(bounds, { padding: 70 });
+  map.fitBounds(bounds, { padding: 50, maxZoom: 10 });
 });
 
 var legendaEl = document.getElementById('legenda-items');

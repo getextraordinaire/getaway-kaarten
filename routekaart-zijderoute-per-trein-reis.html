@@ -39,8 +39,8 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Ashgabat","country":"Turkmenistan","toonLand":"Turkmenistan","days":2,"lng":58.382349,"lat":37.940465,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 1-2","isStart":true,"isEind":false},{"order":2,"destination":"Mary","country":"Turkmenistan","toonLand":"","days":1,"lng":61.841187,"lat":37.593174,"type":"destination","transport":"train","bekendheid":1,"day_label":"Dag 3-4","isStart":false,"isEind":false},{"order":3,"destination":"Merw","country":"Turkmenistan","toonLand":"","days":0,"lng":59.384377,"lat":39.122285,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":4,"destination":"Farab","country":"Turkmenistan","toonLand":"","days":0,"lng":63.610844,"lat":39.176296,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":5,"destination":"Buchara","country":"Uzbekistan","toonLand":"Uzbekistan","days":3,"lng":64.41867,"lat":39.772476,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 4-6","isStart":false,"isEind":false},{"order":6,"destination":"Samarkand","country":"Uzbekistan","toonLand":"","days":2,"lng":66.9774,"lat":39.655785,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 7-8","isStart":false,"isEind":false},{"order":7,"destination":"Tashkent","country":"Uzbekistan","toonLand":"","days":2,"lng":69.278708,"lat":41.312336,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 9-10","isStart":false,"isEind":false},{"order":8,"destination":"Almaty","country":"Kazakhstan","toonLand":"Kazakhstan","days":2,"lng":76.945728,"lat":43.236392,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 11-12","isStart":false,"isEind":false},{"order":9,"destination":"Zharkent","country":"Kazakhstan","toonLand":"","days":1,"lng":80.002739,"lat":44.165665,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 13","isStart":false,"isEind":false},{"order":10,"destination":"Khorgos","country":"China","toonLand":"China","days":0,"lng":80.41159,"lat":44.21521,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 14","isStart":false,"isEind":false},{"order":11,"destination":"Yining","country":"China","toonLand":"","days":1,"lng":81.275055,"lat":43.905655,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 14-15","isStart":false,"isEind":false},{"order":12,"destination":"Turpan","country":"China","toonLand":"","days":3,"lng":89.24833,"lat":42.97077,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 15-17","isStart":false,"isEind":false},{"order":13,"destination":"Dunhuang","country":"China","toonLand":"","days":2,"lng":94.65932,"lat":40.1408,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 18-19","isStart":false,"isEind":false},{"order":14,"destination":"Jiayuguan","country":"China","toonLand":"","days":1,"lng":98.27982,"lat":39.786938,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 20","isStart":false,"isEind":false},{"order":15,"destination":"X'ian","country":"China","toonLand":"","days":3,"lng":108.95584,"lat":34.261143,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 21-23","isStart":false,"isEind":false},{"order":16,"destination":"Beijing","country":"China","toonLand":"","days":3,"lng":116.391297,"lat":39.905714,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 24-26","isStart":false,"isEind":false},{"order":17,"destination":"Beijing","country":"China","toonLand":"","days":0,"lng":116.391297,"lat":39.905714,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 27","isStart":false,"isEind":true}];
-const segments = [{"from":[58.382349,37.940465],"to":[61.841187,37.593174],"transport":"train"},{"from":[61.841187,37.593174],"to":[59.384377,39.122285],"transport":"car"},{"from":[59.384377,39.122285],"to":[63.610844,39.176296],"transport":"car"},{"from":[63.610844,39.176296],"to":[64.41867,39.772476],"transport":"car"},{"from":[64.41867,39.772476],"to":[66.9774,39.655785],"transport":"train"},{"from":[66.9774,39.655785],"to":[69.278708,41.312336],"transport":"train"},{"from":[69.278708,41.312336],"to":[76.945728,43.236392],"transport":"train"},{"from":[76.945728,43.236392],"to":[80.002739,44.165665],"transport":"car"},{"from":[80.002739,44.165665],"to":[80.41159,44.21521],"transport":"car"},{"from":[80.41159,44.21521],"to":[81.275055,43.905655],"transport":"car"},{"from":[81.275055,43.905655],"to":[89.24833,42.97077],"transport":"train"},{"from":[89.24833,42.97077],"to":[94.65932,40.1408],"transport":"train"},{"from":[94.65932,40.1408],"to":[98.27982,39.786938],"transport":"car"},{"from":[98.27982,39.786938],"to":[108.95584,34.261143],"transport":"car"},{"from":[108.95584,34.261143],"to":[116.391297,39.905714],"transport":"train"},{"from":[116.391297,39.905714],"to":[116.391297,39.905714],"transport":"car"}];
+const stops = [{"order":1,"destination":"Ashgabat","country":"Turkmenistan","toonLand":"Turkmenistan","days":2,"lng":58.382349,"lat":37.940465,"type":"destination","transport":"unknown","bekendheid":2,"day_label":"Dag 1-2","isStart":true,"isEind":false},{"order":2,"destination":"Mary","country":"Turkmenistan","toonLand":"","days":1,"lng":61.841187,"lat":37.593174,"type":"destination","transport":"train","bekendheid":1,"day_label":"Dag 3-4","isStart":false,"isEind":false},{"order":4,"destination":"Farab","country":"Turkmenistan","toonLand":"","days":0,"lng":63.610844,"lat":39.176296,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":5,"destination":"Buchara","country":"Uzbekistan","toonLand":"Uzbekistan","days":3,"lng":64.41867,"lat":39.772476,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 4-6","isStart":false,"isEind":false},{"order":6,"destination":"Samarkand","country":"Uzbekistan","toonLand":"","days":2,"lng":66.9774,"lat":39.655785,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 7-8","isStart":false,"isEind":false},{"order":7,"destination":"Tashkent","country":"Uzbekistan","toonLand":"","days":2,"lng":69.278708,"lat":41.312336,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 9-10","isStart":false,"isEind":false},{"order":8,"destination":"Almaty","country":"Kazakhstan","toonLand":"Kazakhstan","days":2,"lng":76.945728,"lat":43.236392,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 11-12","isStart":false,"isEind":false},{"order":9,"destination":"Zharkent","country":"Kazakhstan","toonLand":"","days":1,"lng":80.002739,"lat":44.165665,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 13","isStart":false,"isEind":false},{"order":10,"destination":"Khorgos","country":"Kazakhstan","toonLand":"","days":0,"lng":82.627479,"lat":49.948444,"type":"transit","transport":"car","bekendheid":1,"day_label":"Dag 14","isStart":false,"isEind":false},{"order":11,"destination":"Yining","country":"China","toonLand":"China","days":1,"lng":81.275055,"lat":43.905655,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 14","isStart":false,"isEind":false},{"order":12,"destination":"Turpan","country":"China","toonLand":"","days":3,"lng":89.24833,"lat":42.97077,"type":"destination","transport":"train","bekendheid":2,"day_label":"Dag 15-17","isStart":false,"isEind":false},{"order":13,"destination":"Dunhuang","country":"China","toonLand":"","days":2,"lng":94.65932,"lat":40.1408,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 18-19","isStart":false,"isEind":false},{"order":14,"destination":"Jiayuguan","country":"China","toonLand":"","days":1,"lng":98.27982,"lat":39.786938,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 20","isStart":false,"isEind":false},{"order":15,"destination":"X'ian","country":"China","toonLand":"","days":3,"lng":108.95584,"lat":34.261143,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 21-23","isStart":false,"isEind":false},{"order":16,"destination":"Beijing","country":"China","toonLand":"","days":3,"lng":116.391297,"lat":39.905714,"type":"destination","transport":"train","bekendheid":3,"day_label":"Dag 24-26","isStart":false,"isEind":false},{"order":17,"destination":"Beijing","country":"China","toonLand":"","days":0,"lng":116.391297,"lat":39.905714,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 27","isStart":false,"isEind":true}];
+const segments = [{"from":[58.382349,37.940465],"to":[61.841187,37.593174],"transport":"train"},{"from":[61.841187,37.593174],"to":[63.610844,39.176296],"transport":"car"},{"from":[63.610844,39.176296],"to":[64.41867,39.772476],"transport":"car"},{"from":[64.41867,39.772476],"to":[66.9774,39.655785],"transport":"train"},{"from":[66.9774,39.655785],"to":[69.278708,41.312336],"transport":"train"},{"from":[69.278708,41.312336],"to":[76.945728,43.236392],"transport":"train"},{"from":[76.945728,43.236392],"to":[80.002739,44.165665],"transport":"car"},{"from":[80.002739,44.165665],"to":[82.627479,49.948444],"transport":"car"},{"from":[82.627479,49.948444],"to":[81.275055,43.905655],"transport":"car"},{"from":[81.275055,43.905655],"to":[89.24833,42.97077],"transport":"train"},{"from":[89.24833,42.97077],"to":[94.65932,40.1408],"transport":"train"},{"from":[94.65932,40.1408],"to":[98.27982,39.786938],"transport":"car"},{"from":[98.27982,39.786938],"to":[108.95584,34.261143],"transport":"car"},{"from":[108.95584,34.261143],"to":[116.391297,39.905714],"transport":"train"},{"from":[116.391297,39.905714],"to":[116.391297,39.905714],"transport":"car"}];
 const tripCountries = ["TM","UZ","KZ","CN"];
 
 const KLEUR_LICHT = '#F9FBFB';
@@ -110,7 +110,7 @@ const map = new mapboxgl.Map({
       { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
     ]
   },
-  center: [81.55615005882352, 40.415695176470585],
+  center: [83.08037893749999, 40.8548604375],
   zoom: 4
 });
 
@@ -122,9 +122,17 @@ map.on('load', function() {
   var transportMarkers = [];
   var pijlMarkers = [];
 
+  // car-lijnen alleen buigen als er ook een retoursegment bestaat (heen-en-weer naar dezelfde plek);
+  // gewone enkele ritten blijven recht.
+  function _ck(pt){ return pt[0].toFixed(4) + ',' + pt[1].toFixed(4); }
+  var _segSet = {};
+  segments.forEach(function(s){ _segSet[_ck(s.from) + '>' + _ck(s.to)] = true; });
+  function heeftRetour(seg){ return !!_segSet[_ck(seg.to) + '>' + _ck(seg.from)]; }
+
   segments.forEach(function(seg, idx) {
     var cfg = transportConfig[seg.transport] || transportConfig.unknown;
-    var coords = boogCoords(seg.from, seg.to, seg.transport);
+    var _bowT = (seg.transport === 'car' && !heeftRetour(seg)) ? 'unknown' : seg.transport;
+    var coords = boogCoords(seg.from, seg.to, _bowT);
     var sourceId = 'route-' + idx; var layerId = 'route-line-' + idx;
     map.addSource(sourceId, { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords } } });
     var paint = { 'line-color': KLEUR_DONKER, 'line-width': cfg.width, 'line-opacity': 0.9 };
@@ -387,21 +395,29 @@ map.on('load', function() {
       tm.el.style.display = botst ? 'none' : '';
     });
 
-    var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
+    var markerPx = dotFeatures.map(function(f, j) {
+      var pr = (plaatsFeatures[j] && plaatsFeatures[j].properties) ? (plaatsFeatures[j].properties.sortKey || 99) : 99;
+      var pt = map.project(f.geometry.coordinates);
+      return { x: pt.x, y: pt.y, prio: pr };
+    });
     var naamBoxen = [];
     plaatsFeatures.forEach(function(pf, idx) {
       var sp = map.project(pf.geometry.coordinates);
       var off = pf.properties.offset || [0, 0];
       var anchor = pf.properties.anchor || 'bottom';
       var naam = pf.properties.naam || '';
+      var mijnPrio = pf.properties.sortKey || 99;
       var w = naam.length * 7.2, h = 15;
       var ox = sp.x + off[0] * 13, oy = sp.y + off[1] * 13;
       var x0 = anchor.indexOf('left') >= 0 ? ox : anchor.indexOf('right') >= 0 ? ox - w : ox - w / 2;
       var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
       var x1 = x0 + w, y1 = y0 + h;
+      // verberg een naam alleen als de tekst over de stip van een BELANGRIJKER punt valt
+      // (niet wederzijds), zodat in dichte clusters niet alle namen tegelijk verdwijnen
       var raakt = markerPx.some(function(mp, j) {
-        if (j === idx) return false;
-        return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+        if (j === idx) return false; // eigen rondje overslaan
+        var overlapt = mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+        return overlapt && mp.prio < mijnPrio;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
       if (!raakt) naamBoxen.push([x0, y0, x1, y1]);
@@ -425,7 +441,7 @@ map.on('load', function() {
 
   var bounds = new mapboxgl.LngLatBounds();
   stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });
-  map.fitBounds(bounds, { padding: 70 });
+  map.fitBounds(bounds, { padding: 50, maxZoom: 10 });
 });
 
 var legendaEl = document.getElementById('legenda-items');

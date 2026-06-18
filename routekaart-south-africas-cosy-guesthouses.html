@@ -39,9 +39,9 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Johannesburg","country":"South Africa","toonLand":"Zuid-Afrika","days":1,"lng":28.042114,"lat":-26.204678,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Graskop","country":"South Africa","toonLand":"","days":1,"lng":30.840658,"lat":-24.933699,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 2","isStart":false,"isEind":false},{"order":3,"destination":"Kruger National Park","country":"South Africa","toonLand":"","days":2,"lng":31.574825,"lat":-23.853079,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 3-4","isStart":false,"isEind":false},{"order":4,"destination":"eSwatini","country":"Eswatini","toonLand":"","days":1,"lng":31.178316,"lat":-26.401819,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 5","isStart":false,"isEind":false},{"order":5,"destination":"St. Lucia","country":"South Africa","toonLand":"","days":2,"lng":32.411842,"lat":-28.374832,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 6-7","isStart":false,"isEind":false},{"order":6,"destination":"Drakensberg","country":"South Africa","toonLand":"","days":2,"lng":29.126863,"lat":-28.612917,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 8-9","isStart":false,"isEind":false},{"order":7,"destination":"Clarens","country":"South Africa","toonLand":"","days":1,"lng":28.42062,"lat":-28.515364,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 10","isStart":false,"isEind":false},{"order":8,"destination":"Lesotho","country":"Lesotho","toonLand":"","days":2,"lng":28.243011,"lat":-29.581,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 11-12","isStart":false,"isEind":false},{"order":9,"destination":"Cradock","country":"South Africa","toonLand":"","days":1,"lng":25.617104,"lat":-32.169456,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 13","isStart":false,"isEind":false},{"order":10,"destination":"Addo","country":"South Africa","toonLand":"","days":2,"lng":25.688894,"lat":-33.558258,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 14-15","isStart":false,"isEind":false},{"order":11,"destination":"Knysna","country":"South Africa","toonLand":"","days":2,"lng":23.048079,"lat":-34.03538,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 16-17","isStart":false,"isEind":false},{"order":12,"destination":"Swellendam","country":"South Africa","toonLand":"","days":1,"lng":20.44437,"lat":-34.019894,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 18","isStart":false,"isEind":false},{"order":13,"destination":"Hermanus","country":"South Africa","toonLand":"","days":1,"lng":19.241768,"lat":-34.420567,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 18","isStart":false,"isEind":false},{"order":14,"destination":"Kaapstad","country":"South Africa","toonLand":"","days":2,"lng":18.420296,"lat":-33.922497,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 19-20","isStart":false,"isEind":false},{"order":15,"destination":"Kaapstad","country":"South Africa","toonLand":"","days":0,"lng":18.420296,"lat":-33.922497,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 21-22","isStart":false,"isEind":true}];
-const segments = [{"from":[28.042114,-26.204678],"to":[30.840658,-24.933699],"transport":"car"},{"from":[30.840658,-24.933699],"to":[31.574825,-23.853079],"transport":"car"},{"from":[31.574825,-23.853079],"to":[31.178316,-26.401819],"transport":"car"},{"from":[31.178316,-26.401819],"to":[32.411842,-28.374832],"transport":"car"},{"from":[32.411842,-28.374832],"to":[29.126863,-28.612917],"transport":"car"},{"from":[29.126863,-28.612917],"to":[28.42062,-28.515364],"transport":"car"},{"from":[28.42062,-28.515364],"to":[28.243011,-29.581],"transport":"car"},{"from":[28.243011,-29.581],"to":[25.617104,-32.169456],"transport":"car"},{"from":[25.617104,-32.169456],"to":[25.688894,-33.558258],"transport":"car"},{"from":[25.688894,-33.558258],"to":[23.048079,-34.03538],"transport":"car"},{"from":[23.048079,-34.03538],"to":[20.44437,-34.019894],"transport":"car"},{"from":[20.44437,-34.019894],"to":[19.241768,-34.420567],"transport":"car"},{"from":[19.241768,-34.420567],"to":[18.420296,-33.922497],"transport":"car"},{"from":[18.420296,-33.922497],"to":[18.420296,-33.922497],"transport":"car"}];
-const tripCountries = ["ZA","SZ","LS"];
+const stops = [{"order":1,"destination":"Johannesburg","country":"South Africa","toonLand":"Zuid-Afrika","days":1,"lng":28.042114,"lat":-26.204678,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Graskop","country":"South Africa","toonLand":"","days":1,"lng":30.840658,"lat":-24.933699,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 2","isStart":false,"isEind":false},{"order":3,"destination":"Kruger National Park","country":"South Africa","toonLand":"","days":2,"lng":31.574825,"lat":-23.853079,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 3-4","isStart":false,"isEind":false},{"order":4,"destination":"eSwatini","country":"Eswatini","toonLand":"","days":1,"lng":31.13396,"lat":-26.314901,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 5","isStart":false,"isEind":false},{"order":5,"destination":"St. Lucia","country":"South Africa","toonLand":"","days":2,"lng":32.411842,"lat":-28.374832,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 6-7","isStart":false,"isEind":false},{"order":6,"destination":"Drakensberg","country":"South Africa","toonLand":"","days":2,"lng":29.126863,"lat":-28.612917,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 8-9","isStart":false,"isEind":false},{"order":7,"destination":"Clarens","country":"South Africa","toonLand":"","days":1,"lng":28.42062,"lat":-28.515364,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 10","isStart":false,"isEind":false},{"order":9,"destination":"Cradock","country":"South Africa","toonLand":"","days":1,"lng":25.617104,"lat":-32.169456,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 13","isStart":false,"isEind":false},{"order":10,"destination":"Addo","country":"South Africa","toonLand":"","days":2,"lng":30.394539,"lat":-23.072859,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 14-15","isStart":false,"isEind":false},{"order":11,"destination":"Knysna","country":"South Africa","toonLand":"","days":2,"lng":23.048079,"lat":-34.03538,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 16-17","isStart":false,"isEind":false},{"order":12,"destination":"Swellendam","country":"South Africa","toonLand":"","days":1,"lng":20.44437,"lat":-34.019894,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 18","isStart":false,"isEind":false},{"order":13,"destination":"Hermanus","country":"South Africa","toonLand":"","days":1,"lng":19.241768,"lat":-34.420567,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 18","isStart":false,"isEind":false},{"order":14,"destination":"Kaapstad","country":"South Africa","toonLand":"","days":2,"lng":18.420296,"lat":-33.922497,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 19-20","isStart":false,"isEind":false},{"order":15,"destination":"Kaapstad","country":"South Africa","toonLand":"","days":0,"lng":18.420296,"lat":-33.922497,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 21-22","isStart":false,"isEind":true}];
+const segments = [{"from":[28.042114,-26.204678],"to":[30.840658,-24.933699],"transport":"car"},{"from":[30.840658,-24.933699],"to":[31.574825,-23.853079],"transport":"car"},{"from":[31.574825,-23.853079],"to":[31.13396,-26.314901],"transport":"car"},{"from":[31.13396,-26.314901],"to":[32.411842,-28.374832],"transport":"car"},{"from":[32.411842,-28.374832],"to":[29.126863,-28.612917],"transport":"car"},{"from":[29.126863,-28.612917],"to":[28.42062,-28.515364],"transport":"car"},{"from":[28.42062,-28.515364],"to":[25.617104,-32.169456],"transport":"car"},{"from":[25.617104,-32.169456],"to":[30.394539,-23.072859],"transport":"car"},{"from":[30.394539,-23.072859],"to":[23.048079,-34.03538],"transport":"car"},{"from":[23.048079,-34.03538],"to":[20.44437,-34.019894],"transport":"car"},{"from":[20.44437,-34.019894],"to":[19.241768,-34.420567],"transport":"car"},{"from":[19.241768,-34.420567],"to":[18.420296,-33.922497],"transport":"car"},{"from":[18.420296,-33.922497],"to":[18.420296,-33.922497],"transport":"car"}];
+const tripCountries = ["ZA","SZ"];
 
 const KLEUR_LICHT = '#F9FBFB';
 const KLEUR_BLAUW = '#B9D9E0';
@@ -110,7 +110,7 @@ const map = new mapboxgl.Map({
       { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
     ]
   },
-  center: [26.047937066666666, -30.168395800000006],
+  center: [26.22409528571428, -29.45518714285715],
   zoom: 4
 });
 
@@ -122,9 +122,17 @@ map.on('load', function() {
   var transportMarkers = [];
   var pijlMarkers = [];
 
+  // car-lijnen alleen buigen als er ook een retoursegment bestaat (heen-en-weer naar dezelfde plek);
+  // gewone enkele ritten blijven recht.
+  function _ck(pt){ return pt[0].toFixed(4) + ',' + pt[1].toFixed(4); }
+  var _segSet = {};
+  segments.forEach(function(s){ _segSet[_ck(s.from) + '>' + _ck(s.to)] = true; });
+  function heeftRetour(seg){ return !!_segSet[_ck(seg.to) + '>' + _ck(seg.from)]; }
+
   segments.forEach(function(seg, idx) {
     var cfg = transportConfig[seg.transport] || transportConfig.unknown;
-    var coords = boogCoords(seg.from, seg.to, seg.transport);
+    var _bowT = (seg.transport === 'car' && !heeftRetour(seg)) ? 'unknown' : seg.transport;
+    var coords = boogCoords(seg.from, seg.to, _bowT);
     var sourceId = 'route-' + idx; var layerId = 'route-line-' + idx;
     map.addSource(sourceId, { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords } } });
     var paint = { 'line-color': KLEUR_DONKER, 'line-width': cfg.width, 'line-opacity': 0.9 };
@@ -387,21 +395,29 @@ map.on('load', function() {
       tm.el.style.display = botst ? 'none' : '';
     });
 
-    var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
+    var markerPx = dotFeatures.map(function(f, j) {
+      var pr = (plaatsFeatures[j] && plaatsFeatures[j].properties) ? (plaatsFeatures[j].properties.sortKey || 99) : 99;
+      var pt = map.project(f.geometry.coordinates);
+      return { x: pt.x, y: pt.y, prio: pr };
+    });
     var naamBoxen = [];
     plaatsFeatures.forEach(function(pf, idx) {
       var sp = map.project(pf.geometry.coordinates);
       var off = pf.properties.offset || [0, 0];
       var anchor = pf.properties.anchor || 'bottom';
       var naam = pf.properties.naam || '';
+      var mijnPrio = pf.properties.sortKey || 99;
       var w = naam.length * 7.2, h = 15;
       var ox = sp.x + off[0] * 13, oy = sp.y + off[1] * 13;
       var x0 = anchor.indexOf('left') >= 0 ? ox : anchor.indexOf('right') >= 0 ? ox - w : ox - w / 2;
       var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
       var x1 = x0 + w, y1 = y0 + h;
+      // verberg een naam alleen als de tekst over de stip van een BELANGRIJKER punt valt
+      // (niet wederzijds), zodat in dichte clusters niet alle namen tegelijk verdwijnen
       var raakt = markerPx.some(function(mp, j) {
-        if (j === idx) return false;
-        return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+        if (j === idx) return false; // eigen rondje overslaan
+        var overlapt = mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+        return overlapt && mp.prio < mijnPrio;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
       if (!raakt) naamBoxen.push([x0, y0, x1, y1]);
@@ -425,7 +441,7 @@ map.on('load', function() {
 
   var bounds = new mapboxgl.LngLatBounds();
   stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });
-  map.fitBounds(bounds, { padding: 70 });
+  map.fitBounds(bounds, { padding: 50, maxZoom: 10 });
 });
 
 var legendaEl = document.getElementById('legenda-items');

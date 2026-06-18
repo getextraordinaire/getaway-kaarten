@@ -9,7 +9,7 @@ const regels = [
   '- Neem de vertrekplaats aan het einde van de reis op als type "transit". Als de laatste verblijfplaats dezelfde stad is als de vertrekplaats (bijv. Kaapstad), voeg dan TOCH een aparte transit-stop toe met days: 0 — zodat de stad zowel als verblijfplaats als vertrekpunt op de kaart staat.',
   '- Let op: een vliegveld als Preveza telt zowel als aankomst (type "arrival", order 1) als als vertrekstop (type "transit", laatste order). Beide mogen in de route staan ook al zijn het dezelfde coördinaten.',
   '- Transit-stops zijn: ferry-havens waar de reiziger een boot pakt, vliegvelden in het reisland waar een binnenlandse vlucht vertrekt of aankomt, directe aansluitingspunten, én plaatsen waar tijdens een reisdag tussen twee verblijfplaatsen bewust wordt gestopt voor een bezoek (bijv. de tempels van Ayutthaya of de drijvende markt van Damnoen Saduak onderweg naar de volgende bestemming). GEEN transit-stops: plaatsen waar alleen doorheen wordt gereden of die alleen als reisinfo of richtingaanwijzer worden genoemd (bijv. Blyde River Canyon, Tsitsikamma, Wilderness), en daguitstapjes vanuit een vaste uitvalsbasis waarbij de reiziger \'s avonds terugkeert.',
-  '- Kijk ook in de reisinformatie (niet alleen de dag-tot-dag) voor transit-stops. Als de tekst zegt "je reist naar [haven] waar de ferry je naar [eiland] brengt", neem dan [haven] op als transit-stop.',
+  '- Kijk in de volledige reisinformatie voor transit-stops. Als de tekst zegt "je reist naar [haven] waar de ferry je naar [eiland] brengt", neem dan [haven] op als transit-stop.',
   '- Een transit-stop heeft altijd days: 0 en type: "transit"',
   '- BELANGRIJK: voeg een tussenstop ALLEEN toe als de plaats expliciet in de tekst als bezoek, stop of overnachting wordt genoemd. Leid GEEN tussenstops af die niet met zoveel woorden zo worden beschreven — ook geen havens, eilanden of plaatsen die alleen impliciet onderweg lijken te liggen. Bij twijfel: weglaten.',
   '- Filter vertrekplaatsen in Nederland eruit (Amsterdam, Rotterdam, Eindhoven etc.)',
@@ -19,7 +19,7 @@ const regels = [
   '- Tel het aantal verblijfsdagen per bestemming (een dagbereik "Dag 6 t/m 9" = 4 dagen)',
   '- Nummer de bestemmingen op volgorde van bezoek',
   '- Gebruik voor "destination" de naam zoals die in de inputtekst staat',
- '- Als de tekst een specifieke stad, wijk of dorp noemt als overnachtingsplek die binnen circa 30 kilometer van een grotere, bekendere bestemming ligt (bijv. Houtbaai bij Kaapstad), gebruik dan de grotere bestemming als destination én destination_geocode. Alleen als de verblijfplaats écht een eigen bestemming is op meer dan 30 kilometer afstand, neem je hem als aparte stop op. En: als de verblijfplaats een klein dorp op een eiland is dat al als bestemming telt (bijv. Agia Efimia op Kefalonia), gebruik dan de eilandnaam als destination.',
+  '- Als de tekst een specifieke stad, wijk of dorp noemt als overnachtingsplek die binnen circa 30 kilometer van een grotere, bekendere bestemming ligt (bijv. Houtbaai bij Kaapstad), gebruik dan de grotere bestemming als destination én destination_geocode. Alleen als de verblijfplaats écht een eigen bestemming is op meer dan 30 kilometer afstand, neem je hem als aparte stop op. En: als de verblijfplaats een klein dorp op een eiland is dat al als bestemming telt (bijv. Agia Efimia op Kefalonia), gebruik dan de eilandnaam als destination.',
   '- Gebruik voor "destination_geocode" de meest gangbare Engelstalige plaatsnaam die Mapbox Geocoding het beste herkent',
   '- Kies voor de geocode de meest herkenbare, bekende plaats die bij de bestemming hoort, ook als het feitelijke verblijf iets verderop ligt. Een reiziger moet de pin direct kunnen plaatsen. Voorbeeld: bij "River Kwai" is dat Kanchanaburi, de stad met de beroemde brug — gebruik "Kanchanaburi" als destination_geocode, ook al ligt het hotel bij Sai Yok.',
   '- Gebruik type "destination" voor reguliere verblijfplaatsen',
@@ -66,9 +66,6 @@ const regels = [
   '',
   '---',
   '',
-  'Dag tot dag:',
-  '<<DAG_TOT_DAG>>',
-  '',
   'Reisinformatie:',
   '<<REISINFORMATIE>>'
 ];
@@ -76,12 +73,10 @@ const regels = [
 const promptTemplate = regels.join('\n');
 
 return items.map(function(item) {
-  const dagTotDag = item.json['Dag tot dag - generated'] || '';
   const reisinformatie = item.json['Reisinformatie - scraped'] || '';
   const url = item.json.URL || '';
 
   const prompt = promptTemplate
-    .replace('<<DAG_TOT_DAG>>', dagTotDag)
     .replace('<<REISINFORMATIE>>', reisinformatie);
 
   const requestBody = {

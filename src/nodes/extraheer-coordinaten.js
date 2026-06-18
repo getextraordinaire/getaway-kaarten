@@ -40,7 +40,7 @@ return mapboxItems.map(function(item, i) {
         latitude: null,
         longitude: null,
         place_name: null,
-        country_code: null,
+        country_code: dest.country_code || null,
         error: 'Geen coordinaten gevonden'
       }
     };
@@ -61,7 +61,7 @@ return mapboxItems.map(function(item, i) {
       latitude: features[0].center[1],
       longitude: features[0].center[0],
       place_name: features[0].place_name,
-      country_code: vindCountryCode(features[0])
+      country_code: dest.country_code || vindCountryCode(features[0])
     }
   };
 });

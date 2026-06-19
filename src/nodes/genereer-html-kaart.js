@@ -201,9 +201,17 @@ map.on('load', function() {
   var transportMarkers = [];
   var pijlMarkers = [];
 
+  // car-lijnen alleen buigen als er ook een retoursegment bestaat (heen-en-weer naar dezelfde plek);
+  // gewone enkele ritten blijven recht.
+  function _ck(pt){ return pt[0].toFixed(4) + ',' + pt[1].toFixed(4); }
+  var _segSet = {};
+  segments.forEach(function(s){ _segSet[_ck(s.from) + '>' + _ck(s.to)] = true; });
+  function heeftRetour(seg){ return !!_segSet[_ck(seg.to) + '>' + _ck(seg.from)]; }
+
   segments.forEach(function(seg, idx) {
     var cfg = transportConfig[seg.transport] || transportConfig.unknown;
-    var coords = boogCoords(seg.from, seg.to, seg.transport);
+    var _bowT = (seg.transport === 'car' && !heeftRetour(seg)) ? 'unknown' : seg.transport;
+    var coords = boogCoords(seg.from, seg.to, _bowT);
     var sourceId = 'route-' + idx; var layerId = 'route-line-' + idx;
     map.addSource(sourceId, { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords } } });
     var paint = { 'line-color': KLEUR_DONKER, 'line-width': cfg.width, 'line-opacity': 0.9 };
@@ -466,21 +474,29 @@ map.on('load', function() {
       tm.el.style.display = botst ? 'none' : '';
     });
 
-    var markerPx = dotFeatures.map(function(f) { return map.project(f.geometry.coordinates); });
+    var markerPx = dotFeatures.map(function(f, j) {
+      var pr = (plaatsFeatures[j] && plaatsFeatures[j].properties) ? (plaatsFeatures[j].properties.sortKey || 99) : 99;
+      var pt = map.project(f.geometry.coordinates);
+      return { x: pt.x, y: pt.y, prio: pr };
+    });
     var naamBoxen = [];
     plaatsFeatures.forEach(function(pf, idx) {
       var sp = map.project(pf.geometry.coordinates);
       var off = pf.properties.offset || [0, 0];
       var anchor = pf.properties.anchor || 'bottom';
       var naam = pf.properties.naam || '';
+      var mijnPrio = pf.properties.sortKey || 99;
       var w = naam.length * 7.2, h = 15;
       var ox = sp.x + off[0] * 13, oy = sp.y + off[1] * 13;
       var x0 = anchor.indexOf('left') >= 0 ? ox : anchor.indexOf('right') >= 0 ? ox - w : ox - w / 2;
       var y0 = anchor.indexOf('top') >= 0 ? oy : anchor.indexOf('bottom') >= 0 ? oy - h : oy - h / 2;
       var x1 = x0 + w, y1 = y0 + h;
+      // verberg een naam alleen als de tekst over de stip van een BELANGRIJKER punt valt
+      // (niet wederzijds), zodat in dichte clusters niet alle namen tegelijk verdwijnen
       var raakt = markerPx.some(function(mp, j) {
-        if (j === idx) return false;
-        return mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+        if (j === idx) return false; // eigen rondje overslaan
+        var overlapt = mp.x > x0 - 5 && mp.x < x1 + 5 && mp.y > y0 - 5 && mp.y < y1 + 5;
+        return overlapt && mp.prio < mijnPrio;
       });
       map.setFeatureState({ source: 'plaatsnamen', id: idx }, { verborgen: raakt });
       if (!raakt) naamBoxen.push([x0, y0, x1, y1]);
@@ -504,7 +520,7 @@ map.on('load', function() {
 
   var bounds = new mapboxgl.LngLatBounds();
   stops.forEach(function(s) { bounds.extend([s.lng, s.lat]); });
-  map.fitBounds(bounds, { padding: 70 });
+  map.fitBounds(bounds, { padding: 50, maxZoom: 10 });
 });
 
 var legendaEl = document.getElementById('legenda-items');

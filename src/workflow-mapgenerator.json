@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-06-18T06:53:33.911Z",
+  "updatedAt": "2026-06-25T15:30:15.831Z",
   "createdAt": "2026-05-18T14:36:28.140Z",
   "id": "XPSwqndBGvARd0zq",
-  "name": "Draft mapgenerator Claude Sonnet 4.6",
+  "name": "Draft mapgenerator Claude Opus 4.8",
   "description": "Map generator",
   "active": true,
   "isArchived": false,
@@ -88,23 +88,6 @@
     {
       "parameters": {
         "url": "={{ $json.mapboxUrl }}",
-        "sendQuery": false,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "access_token",
-              "value": "REDACTED_MAPBOX_PUBLIC_TOKEN"
-            },
-            {
-              "name": "limit",
-              "value": "1"
-            },
-            {
-              "name": "types",
-              "value": "place,region,country,locality"
-            }
-          ]
-        },
         "options": {}
       },
       "id": "5eaa4348-0433-4dc5-805c-0362cd78bb26",
@@ -372,15 +355,15 @@
         26032,
         -2448
       ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000,
       "credentials": {
         "githubApi": {
           "id": "WfhRAZf95BOBEm4l",
           "name": "GitHub account"
         }
-      },
-      "retryOnFail": true,
-      "maxTries": 5,
-      "waitBetweenTries": 3000
+      }
     },
     {
       "parameters": {
@@ -548,17 +531,17 @@
       ]
     },
     {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst token = 'REDACTED_MAPBOX_PUBLIC_TOKEN';\nconst base = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';\n\nvar ISO = {\n  'thailand':'TH','laos':'LA','cambodia':'KH','vietnam':'VN','myanmar':'MM','burma':'MM',\n  'malaysia':'MY','indonesia':'ID','singapore':'SG','philippines':'PH','japan':'JP',\n  'china':'CN','india':'IN','nepal':'NP','bhutan':'BT','sri lanka':'LK','bangladesh':'BD',\n  'mongolia':'MN','turkmenistan':'TM','uzbekistan':'UZ','kazakhstan':'KZ','kyrgyzstan':'KG',\n  'tajikistan':'TJ','south korea':'KR','taiwan':'TW',\n  'south africa':'ZA','eswatini':'SZ','swaziland':'SZ','lesotho':'LS','namibia':'NA',\n  'botswana':'BW','zimbabwe':'ZW','zambia':'ZM','tanzania':'TZ','kenya':'KE','uganda':'UG',\n  'rwanda':'RW','mozambique':'MZ','malawi':'MW','madagascar':'MG','morocco':'MA','tunisia':'TN',\n  'egypt':'EG','jordan':'JO','israel':'IL','ethiopia':'ET','ghana':'GH','senegal':'SN',\n  'cape verde':'CV','cabo verde':'CV','mauritius':'MU','seychelles':'SC',\n  'greece':'GR','italy':'IT','spain':'ES','portugal':'PT','france':'FR','croatia':'HR',\n  'germany':'DE','austria':'AT','switzerland':'CH','netherlands':'NL','belgium':'BE',\n  'united kingdom':'GB','uk':'GB','ireland':'IE','iceland':'IS','norway':'NO','sweden':'SE',\n  'finland':'FI','denmark':'DK','turkey':'TR','turkiye':'TR','georgia':'GE','armenia':'AM',\n  'azerbaijan':'AZ','albania':'AL','montenegro':'ME','slovenia':'SI','poland':'PL',\n  'czech republic':'CZ','czechia':'CZ','hungary':'HU','romania':'RO','bulgaria':'BG',\n  'peru':'PE','argentina':'AR','chile':'CL','brazil':'BR','bolivia':'BO','ecuador':'EC',\n  'colombia':'CO','venezuela':'VE','uruguay':'UY','paraguay':'PY','guatemala':'GT',\n  'costa rica':'CR','panama':'PA','nicaragua':'NI','honduras':'HN','belize':'BZ',\n  'mexico':'MX','cuba':'CU','dominican republic':'DO','jamaica':'JM',\n  'united states':'US','usa':'US','united states of america':'US','canada':'CA',\n  'australia':'AU','new zealand':'NZ','fiji':'FJ','french polynesia':'PF','samoa':'WS',\n  'vanuatu':'VU','papua new guinea':'PG','oman':'OM','united arab emirates':'AE','uae':'AE',\n  'saudi arabia':'SA','qatar':'QA','iran':'IR','pakistan':'PK','afghanistan':'AF'\n};\nfunction landIso(land) { var k = (land || '').toLowerCase().trim(); return ISO[k] || ''; }\n\nfunction mediaan(arr) {\n  const s = arr.slice().sort(function(a,b){ return a-b; });\n  const n = s.length;\n  if (!n) return 0;\n  return n % 2 ? s[(n-1)/2] : (s[n/2-1] + s[n/2]) / 2;\n}\nfunction afstand(aLng, aLat, bLng, bLat) {\n  const dx = aLng - bLng, dy = aLat - bLat;\n  return Math.sqrt(dx*dx + dy*dy);\n}\nfunction vindCountryCode(feature) {\n  try {\n    if (feature.place_type && feature.place_type.indexOf('country') !== -1) {\n      return (feature.properties && feature.properties.short_code) ? feature.properties.short_code.toUpperCase() : null;\n    }\n    if (feature.context) {\n      const c = feature.context.find(function(x){ return x.id && x.id.indexOf('country') === 0; });\n      if (c && c.short_code) return c.short_code.toUpperCase();\n    }\n  } catch(e) {}\n  return null;\n}\n\nconst out = [];\nfor (const item of items) {\n  const route = item.json.route || [];\n  const valid = route.filter(function(s){ return s.latitude != null && s.longitude != null; });\n\n  // robuust middelpunt van de reis (mediaan is ongevoelig voor 1 foute uitschieter)\n  const medLat = mediaan(valid.map(function(s){ return s.latitude; }));\n  const medLng = mediaan(valid.map(function(s){ return s.longitude; }));\n\n  for (const s of route) {\n    const iso = landIso(s.country);\n    // forceer een betrouwbare country_code (stuurt de ingekleurde landen op de kaart aan)\n    if (iso) { s.country_code = iso; }\n\n    const q = encodeURIComponent((s.destination_geocode || s.destination) + ', ' + (s.country || ''));\n    const url = base + q + '.json';\n    // 'poi' erbij zodat kloosters/natuurplekken matchen; 'country' weggelaten (geen heel-land-terugval)\n    var qs = { access_token: token, limit: 1, types: 'place,locality,poi,region', proximity: medLng + ',' + medLat };\n    // per-stop landfilter: de pin kan nooit buiten het opgegeven land vallen\n    if (iso) { qs.country = iso.toLowerCase(); }\n\n    let resp;\n    try {\n      resp = await this.helpers.httpRequest({ method: 'GET', url: url, qs: qs, json: true });\n    } catch(e) { continue; }\n\n    const f = resp && resp.features && resp.features[0];\n    if (!f || !f.center) continue;\n    const newLng = f.center[0], newLat = f.center[1];\n\n    if (s.latitude == null || s.longitude == null) {\n      s.longitude = newLng; s.latitude = newLat;\n      s.place_name = f.place_name;\n      s.country_code = iso || vindCountryCode(f) || s.country_code;\n      continue;\n    }\n\n    const dOud = afstand(s.longitude, s.latitude, medLng, medLat);\n    const dNieuw = afstand(newLng, newLat, medLng, medLat);\n    // alleen verplaatsen als het nieuwe punt DUIDELIJK dichter bij de route ligt\n    if (dNieuw < dOud - 0.05) {\n      s.longitude = newLng; s.latitude = newLat;\n      s.place_name = f.place_name;\n      s.country_code = iso || vindCountryCode(f) || s.country_code;\n    }\n  }\n\n  // --- opschoon-vangnet: verwijder overduidelijk foute pins (beter geen pin dan een verkeerde) ---\n  function rond(v){ return Math.round(v * 100) / 100; }\n  const geldig2 = route.filter(function(s){ return s.latitude != null && s.longitude != null; });\n  if (geldig2.length >= 4) {\n    const cLat = mediaan(geldig2.map(function(s){ return s.latitude; }));\n    const cLng = mediaan(geldig2.map(function(s){ return s.longitude; }));\n    const spreiding = mediaan(geldig2.map(function(s){ return afstand(s.longitude, s.latitude, cLng, cLat); })) || 0.0001;\n    // tel hoeveel VERSCHILLENDE plaatsnamen op exact hetzelfde (afgeronde) punt liggen\n    const perPunt = {};\n    geldig2.forEach(function(s){\n      const k = rond(s.longitude) + ',' + rond(s.latitude);\n      if (!perPunt[k]) perPunt[k] = {};\n      perPunt[k][(s.destination || '').toLowerCase().trim()] = true;\n    });\n    route.forEach(function(s){\n      if (s.latitude == null || s.longitude == null) return;\n      const k = rond(s.longitude) + ',' + rond(s.latitude);\n      const aantalNamen = Object.keys(perPunt[k] || {}).length;\n      const d = afstand(s.longitude, s.latitude, cLng, cLat);\n      const stapel = aantalNamen >= 3;\n      const uitschieter = d > 6 && d > 5 * spreiding;\n      if (stapel || uitschieter) { s.latitude = null; s.longitude = null; }\n    });\n  }\n\n  out.push({ json: Object.assign({}, item.json, { route: route }) });\n}\nreturn out;"
+      },
       "id": "861fad91-7c91-460d-b167-47717c22da34",
       "name": "Corrigeer geocoding",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        24360,
-        -2280
-      ],
-      "parameters": {
-        "jsCode": "const items = $input.all();\nconst token = 'REDACTED_MAPBOX_PUBLIC_TOKEN';\nconst base = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';\n\nvar ISO = {\n  'thailand':'TH','laos':'LA','cambodia':'KH','vietnam':'VN','myanmar':'MM','burma':'MM',\n  'malaysia':'MY','indonesia':'ID','singapore':'SG','philippines':'PH','japan':'JP',\n  'china':'CN','india':'IN','nepal':'NP','bhutan':'BT','sri lanka':'LK','bangladesh':'BD',\n  'mongolia':'MN','turkmenistan':'TM','uzbekistan':'UZ','kazakhstan':'KZ','kyrgyzstan':'KG',\n  'tajikistan':'TJ','south korea':'KR','taiwan':'TW',\n  'south africa':'ZA','eswatini':'SZ','swaziland':'SZ','lesotho':'LS','namibia':'NA',\n  'botswana':'BW','zimbabwe':'ZW','zambia':'ZM','tanzania':'TZ','kenya':'KE','uganda':'UG',\n  'rwanda':'RW','mozambique':'MZ','malawi':'MW','madagascar':'MG','morocco':'MA','tunisia':'TN',\n  'egypt':'EG','jordan':'JO','israel':'IL','ethiopia':'ET','ghana':'GH','senegal':'SN',\n  'cape verde':'CV','cabo verde':'CV','mauritius':'MU','seychelles':'SC',\n  'greece':'GR','italy':'IT','spain':'ES','portugal':'PT','france':'FR','croatia':'HR',\n  'germany':'DE','austria':'AT','switzerland':'CH','netherlands':'NL','belgium':'BE',\n  'united kingdom':'GB','uk':'GB','ireland':'IE','iceland':'IS','norway':'NO','sweden':'SE',\n  'finland':'FI','denmark':'DK','turkey':'TR','turkiye':'TR','georgia':'GE','armenia':'AM',\n  'azerbaijan':'AZ','albania':'AL','montenegro':'ME','slovenia':'SI','poland':'PL',\n  'czech republic':'CZ','czechia':'CZ','hungary':'HU','romania':'RO','bulgaria':'BG',\n  'peru':'PE','argentina':'AR','chile':'CL','brazil':'BR','bolivia':'BO','ecuador':'EC',\n  'colombia':'CO','venezuela':'VE','uruguay':'UY','paraguay':'PY','guatemala':'GT',\n  'costa rica':'CR','panama':'PA','nicaragua':'NI','honduras':'HN','belize':'BZ',\n  'mexico':'MX','cuba':'CU','dominican republic':'DO','jamaica':'JM',\n  'united states':'US','usa':'US','united states of america':'US','canada':'CA',\n  'australia':'AU','new zealand':'NZ','fiji':'FJ','french polynesia':'PF','samoa':'WS',\n  'vanuatu':'VU','papua new guinea':'PG','oman':'OM','united arab emirates':'AE','uae':'AE',\n  'saudi arabia':'SA','qatar':'QA','iran':'IR','pakistan':'PK','afghanistan':'AF'\n};\nfunction landIso(land) { var k = (land || '').toLowerCase().trim(); return ISO[k] || ''; }\n\nfunction mediaan(arr) {\n  const s = arr.slice().sort(function(a,b){ return a-b; });\n  const n = s.length;\n  if (!n) return 0;\n  return n % 2 ? s[(n-1)/2] : (s[n/2-1] + s[n/2]) / 2;\n}\nfunction afstand(aLng, aLat, bLng, bLat) {\n  const dx = aLng - bLng, dy = aLat - bLat;\n  return Math.sqrt(dx*dx + dy*dy);\n}\nfunction vindCountryCode(feature) {\n  try {\n    if (feature.place_type && feature.place_type.indexOf('country') !== -1) {\n      return (feature.properties && feature.properties.short_code) ? feature.properties.short_code.toUpperCase() : null;\n    }\n    if (feature.context) {\n      const c = feature.context.find(function(x){ return x.id && x.id.indexOf('country') === 0; });\n      if (c && c.short_code) return c.short_code.toUpperCase();\n    }\n  } catch(e) {}\n  return null;\n}\n\nconst out = [];\nfor (const item of items) {\n  const route = item.json.route || [];\n  const valid = route.filter(function(s){ return s.latitude != null && s.longitude != null; });\n\n  // robuust middelpunt van de reis (mediaan is ongevoelig voor 1 foute uitschieter)\n  const medLat = mediaan(valid.map(function(s){ return s.latitude; }));\n  const medLng = mediaan(valid.map(function(s){ return s.longitude; }));\n\n  for (const s of route) {\n    const iso = landIso(s.country);\n    // forceer een betrouwbare country_code (stuurt de ingekleurde landen op de kaart aan)\n    if (iso) { s.country_code = iso; }\n\n    const q = encodeURIComponent((s.destination_geocode || s.destination) + ', ' + (s.country || ''));\n    const url = base + q + '.json';\n    // 'poi' erbij zodat kloosters/natuurplekken matchen; 'country' weggelaten (geen heel-land-terugval)\n    var qs = { access_token: token, limit: 1, types: 'place,locality,poi,region', proximity: medLng + ',' + medLat };\n    // per-stop landfilter: de pin kan nooit buiten het opgegeven land vallen\n    if (iso) { qs.country = iso.toLowerCase(); }\n\n    let resp;\n    try {\n      resp = await this.helpers.httpRequest({ method: 'GET', url: url, qs: qs, json: true });\n    } catch(e) { continue; }\n\n    const f = resp && resp.features && resp.features[0];\n    if (!f || !f.center) continue;\n    const newLng = f.center[0], newLat = f.center[1];\n\n    if (s.latitude == null || s.longitude == null) {\n      s.longitude = newLng; s.latitude = newLat;\n      s.place_name = f.place_name;\n      s.country_code = iso || vindCountryCode(f) || s.country_code;\n      continue;\n    }\n\n    const dOud = afstand(s.longitude, s.latitude, medLng, medLat);\n    const dNieuw = afstand(newLng, newLat, medLng, medLat);\n    // alleen verplaatsen als het nieuwe punt DUIDELIJK dichter bij de route ligt\n    if (dNieuw < dOud - 0.05) {\n      s.longitude = newLng; s.latitude = newLat;\n      s.place_name = f.place_name;\n      s.country_code = iso || vindCountryCode(f) || s.country_code;\n    }\n  }\n\n  // --- opschoon-vangnet: verwijder overduidelijk foute pins (beter geen pin dan een verkeerde) ---\n  function rond(v){ return Math.round(v * 100) / 100; }\n  const geldig2 = route.filter(function(s){ return s.latitude != null && s.longitude != null; });\n  if (geldig2.length >= 4) {\n    const cLat = mediaan(geldig2.map(function(s){ return s.latitude; }));\n    const cLng = mediaan(geldig2.map(function(s){ return s.longitude; }));\n    const spreiding = mediaan(geldig2.map(function(s){ return afstand(s.longitude, s.latitude, cLng, cLat); })) || 0.0001;\n    // tel hoeveel VERSCHILLENDE plaatsnamen op exact hetzelfde (afgeronde) punt liggen\n    const perPunt = {};\n    geldig2.forEach(function(s){\n      const k = rond(s.longitude) + ',' + rond(s.latitude);\n      if (!perPunt[k]) perPunt[k] = {};\n      perPunt[k][(s.destination || '').toLowerCase().trim()] = true;\n    });\n    route.forEach(function(s){\n      if (s.latitude == null || s.longitude == null) return;\n      const k = rond(s.longitude) + ',' + rond(s.latitude);\n      const aantalNamen = Object.keys(perPunt[k] || {}).length;\n      const d = afstand(s.longitude, s.latitude, cLng, cLat);\n      const stapel = aantalNamen >= 3;\n      const uitschieter = d > 6 && d > 5 * spreiding;\n      if (stapel || uitschieter) { s.latitude = null; s.longitude = null; }\n    });\n  }\n\n  out.push({ json: Object.assign({}, item.json, { route: route }) });\n}\nreturn out;"
-      }
+        24368,
+        -2288
+      ]
     }
   ],
   "connections": {
@@ -822,9 +805,9 @@
   },
   "nodeGroups": [],
   "pinData": {},
-  "versionId": "c9033c1e-d451-4988-90b4-081fb0ba1e05",
+  "versionId": "0cefa975-9e01-4c0b-a369-36794d406402",
   "activeVersionId": "c9033c1e-d451-4988-90b4-081fb0ba1e05",
-  "versionCounter": 527,
+  "versionCounter": 528,
   "triggerCount": 1,
   "sourceWorkflowId": null,
   "shared": [

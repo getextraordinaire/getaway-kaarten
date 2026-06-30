@@ -39,14 +39,15 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Zululand","country":"South Africa","toonLand":"Zuid-Afrika","days":3,"lng":32.268604,"lat":-28.019325,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 1-3","isStart":true,"isEind":false},{"order":2,"destination":"Kosi Bay Natuur Reservaat","country":"South Africa","toonLand":"","days":1,"lng":30.378889,"lat":-29.6,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":3,"destination":"Ponta do Ouro","country":"Mozambique","toonLand":"Mozambique","days":2,"lng":32.883046,"lat":-26.840508,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 5-6","isStart":false,"isEind":false},{"order":4,"destination":"Maputo","country":"Mozambique","toonLand":"","days":1,"lng":32.56745,"lat":-25.966213,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 7","isStart":false,"isEind":false},{"order":5,"destination":"Inhambane","country":"Mozambique","toonLand":"","days":2,"lng":35.385563,"lat":-23.865437,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 8-9","isStart":false,"isEind":false},{"order":6,"destination":"Chizavane","country":"Mozambique","toonLand":"","days":1,"lng":33.64228,"lat":-25.043629,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 10","isStart":false,"isEind":false},{"order":7,"destination":"Kruger Nationaal Park","country":"South Africa","toonLand":"","days":2,"lng":31.574825,"lat":-23.853079,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 11-12","isStart":false,"isEind":false},{"order":8,"destination":"Greater Kruger","country":"South Africa","toonLand":"","days":2,"lng":31.574825,"lat":-23.853079,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 13","isStart":false,"isEind":false},{"order":9,"destination":"Johannesburg","country":"South Africa","toonLand":"","days":0,"lng":28.042114,"lat":-26.204678,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 14","isStart":false,"isEind":true}];
-const segments = [{"from":[32.268604,-28.019325],"to":[30.378889,-29.6],"transport":"car"},{"from":[30.378889,-29.6],"to":[32.883046,-26.840508],"transport":"car"},{"from":[32.883046,-26.840508],"to":[32.56745,-25.966213],"transport":"car"},{"from":[32.56745,-25.966213],"to":[35.385563,-23.865437],"transport":"car"},{"from":[35.385563,-23.865437],"to":[33.64228,-25.043629],"transport":"car"},{"from":[33.64228,-25.043629],"to":[31.574825,-23.853079],"transport":"car"},{"from":[31.574825,-23.853079],"to":[31.574825,-23.853079],"transport":"car"},{"from":[31.574825,-23.853079],"to":[28.042114,-26.204678],"transport":"car"}];
+const stops = [{"order":1,"destination":"Zululand","country":"South Africa","toonLand":"Zuid-Afrika","days":3,"lng":30.394539,"lat":-23.072859,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 1-3","isStart":true,"isEind":false},{"order":2,"destination":"Kosi Bay Natuur Reservaat","country":"South Africa","toonLand":"","days":1,"lng":30.378889,"lat":-29.6,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 4","isStart":false,"isEind":false},{"order":3,"destination":"Ponta do Ouro","country":"Mozambique","toonLand":"Mozambique","days":2,"lng":32.883046,"lat":-26.840508,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 5-6","isStart":false,"isEind":false},{"order":4,"destination":"Maputo","country":"Mozambique","toonLand":"","days":1,"lng":32.56745,"lat":-25.966213,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 7","isStart":false,"isEind":false},{"order":5,"destination":"Inhambane","country":"Mozambique","toonLand":"","days":2,"lng":35.385563,"lat":-23.865437,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 8-9","isStart":false,"isEind":false},{"order":6,"destination":"Chizavane","country":"Mozambique","toonLand":"","days":1,"lng":33.64228,"lat":-25.043629,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 10","isStart":false,"isEind":false},{"order":7,"destination":"Kruger Nationaal Park","country":"South Africa","toonLand":"","days":2,"lng":31.592167,"lat":-24.995052,"type":"destination","transport":"car","bekendheid":3,"day_label":"Dag 11-12","isStart":false,"isEind":false},{"order":8,"destination":"Greater Kruger","country":"South Africa","toonLand":"","days":1,"lng":31.592167,"lat":-24.995052,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 13","isStart":false,"isEind":false},{"order":9,"destination":"Johannesburg","country":"South Africa","toonLand":"","days":0,"lng":28.042114,"lat":-26.204678,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 14","isStart":false,"isEind":true}];
+const segments = [{"from":[30.394539,-23.072859],"to":[30.378889,-29.6],"transport":"car"},{"from":[30.378889,-29.6],"to":[32.883046,-26.840508],"transport":"car"},{"from":[32.883046,-26.840508],"to":[32.56745,-25.966213],"transport":"car"},{"from":[32.56745,-25.966213],"to":[35.385563,-23.865437],"transport":"car"},{"from":[35.385563,-23.865437],"to":[33.64228,-25.043629],"transport":"car"},{"from":[33.64228,-25.043629],"to":[31.592167,-24.995052],"transport":"car"},{"from":[31.592167,-24.995052],"to":[31.592167,-24.995052],"transport":"car"},{"from":[31.592167,-24.995052],"to":[28.042114,-26.204678],"transport":"car"}];
 const tripCountries = ["ZA","MZ"];
 
 const KLEUR_LICHT = '#F9FBFB';
 const KLEUR_BLAUW = '#B9D9E0';
 const KLEUR_DONKER = '#3B4651';
 const KLEUR_GRIJS = '#ABC6CB';
+const KLEUR_OMRINGEND = '#EAF2F4';
 
 const transportConfig = {
   flight:  { dash: [2, 2], width: 2, label: 'Vlucht',     svg: 'M21,16v-2l-8-5V3.5C13,2.67,12.33,2,11.5,2S10,2.67,10,3.5V9l-8,5v2l8-2.5V19l-2,1.5V22l3.5-1l3.5,1v-1.5L13,19v-5.5L21,16z' },
@@ -93,6 +94,8 @@ function boogCoords(from, to, transport, punten) {
   return coords;
 }
 
+const wereldFilter = ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]];
+
 const landenFilter = ['all',
   ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]],
   ['in', ['get', 'iso_3166_1'], ['literal', tripCountries]]
@@ -106,11 +109,12 @@ const map = new mapboxgl.Map({
     sources: { landen: { type: 'vector', url: 'mapbox://mapbox.country-boundaries-v1' } },
     layers: [
       { id: 'achtergrond', type: 'background', paint: { 'background-color': KLEUR_LICHT } },
+      { id: 'omringende-landen', type: 'fill', source: 'landen', 'source-layer': 'country_boundaries', filter: wereldFilter, paint: { 'fill-color': KLEUR_OMRINGEND } },
       { id: 'reisland-vlak', type: 'fill', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'fill-color': KLEUR_BLAUW } },
       { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
     ]
   },
-  center: [32.03528844444445, -25.916216444444448],
+  center: [31.830912777777783, -25.620380888888885],
   zoom: 4
 });
 

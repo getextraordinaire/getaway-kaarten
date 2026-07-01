@@ -69,8 +69,8 @@ for (const item of items) {
 
     const q = encodeURIComponent((s.destination_geocode || s.destination) + ', ' + (s.country || ''));
     const url = base + q + '.json';
-    // 'poi' erbij zodat kloosters/natuurplekken matchen; 'country' weggelaten (geen heel-land-terugval)
-    var qs = { access_token: token, limit: 1, types: 'place,locality,poi,region', proximity: medLng + ',' + medLat };
+    // 'country' weggelaten (geen heel-land-terugval); 'poi' bewust NIET (brak werkende kaarten zoals Addo)
+    var qs = { access_token: token, limit: 1, types: 'place,locality,region', proximity: medLng + ',' + medLat };
     // per-stop landfilter: de pin kan nooit buiten het opgegeven land vallen
     if (iso) { qs.country = iso.toLowerCase(); }
 

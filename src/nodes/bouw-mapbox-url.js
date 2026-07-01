@@ -36,9 +36,9 @@ return items.map(function(item, index) {
   const country = item.json.country;
   const iso = landIso(country);
   const searchText = encodeURIComponent(destinationGeocode + ', ' + country);
-  // types incl. 'poi' zodat kloosters/natuurplekken (Tibet, Mongolie) direct matchen;
   // 'country' bewust weggelaten zodat hij niet terugvalt op een heel-land-middelpunt.
-  var mapboxUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + searchText + '.json' + '?access_token=' + token + '&limit=1&types=place,locality,poi,region';
+  // 'poi' bewust NIET gebruikt: brak werkende kaarten (bijv. Addo matchte op een verkeerde POI).
+  var mapboxUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + searchText + '.json' + '?access_token=' + token + '&limit=1&types=place,locality,region';
   if (iso) { mapboxUrl += '&country=' + iso.toLowerCase(); }
   return {
     json: {

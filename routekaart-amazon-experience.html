@@ -39,15 +39,14 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Quito","country":"Ecuador","toonLand":"Ecuador","days":1,"lng":-78.51131,"lat":-0.221173,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Baños","country":"Ecuador","toonLand":"","days":7,"lng":-78.42256,"lat":-1.397648,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 2-8","isStart":false,"isEind":false},{"order":3,"destination":"Amazon Rescue Center","country":"Ecuador","toonLand":"","days":13,"lng":-77.997,"lat":-1.4855,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 9-21","isStart":false,"isEind":false},{"order":4,"destination":"Quito","country":"Ecuador","toonLand":"","days":0,"lng":-78.51131,"lat":-0.221173,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 22","isStart":false,"isEind":true}];
-const segments = [{"from":[-78.51131,-0.221173],"to":[-78.42256,-1.397648],"transport":"car"},{"from":[-78.42256,-1.397648],"to":[-77.997,-1.4855],"transport":"car"},{"from":[-77.997,-1.4855],"to":[-78.51131,-0.221173],"transport":"car"}];
+const stops = [{"order":1,"destination":"Quito","country":"Ecuador","toonLand":"Ecuador","days":1,"lng":-78.51131,"lat":-0.221173,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Baños","country":"Ecuador","toonLand":"","days":6,"lng":-78.423406,"lat":-1.397961,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 2-8","isStart":false,"isEind":false},{"order":3,"destination":"Amazon Rescue Center","country":"Ecuador","toonLand":"","days":13,"lng":-77.997,"lat":-1.4855,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 9-22","isStart":false,"isEind":false},{"order":4,"destination":"Quito","country":"Ecuador","toonLand":"","days":0,"lng":-78.51131,"lat":-0.221173,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 22","isStart":false,"isEind":true}];
+const segments = [{"from":[-78.51131,-0.221173],"to":[-78.423406,-1.397961],"transport":"car"},{"from":[-78.423406,-1.397961],"to":[-77.997,-1.4855],"transport":"car"},{"from":[-77.997,-1.4855],"to":[-78.51131,-0.221173],"transport":"car"}];
 const tripCountries = ["EC"];
 
 const KLEUR_LICHT = '#F9FBFB';
 const KLEUR_BLAUW = '#B9D9E0';
 const KLEUR_DONKER = '#3B4651';
 const KLEUR_GRIJS = '#ABC6CB';
-const KLEUR_OMRINGEND = '#EAF2F4';
 
 const transportConfig = {
   flight:  { dash: [2, 2], width: 2, label: 'Vlucht',     svg: 'M21,16v-2l-8-5V3.5C13,2.67,12.33,2,11.5,2S10,2.67,10,3.5V9l-8,5v2l8-2.5V19l-2,1.5V22l3.5-1l3.5,1v-1.5L13,19v-5.5L21,16z' },
@@ -94,8 +93,6 @@ function boogCoords(from, to, transport, punten) {
   return coords;
 }
 
-const wereldFilter = ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]];
-
 const landenFilter = ['all',
   ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]],
   ['in', ['get', 'iso_3166_1'], ['literal', tripCountries]]
@@ -109,12 +106,11 @@ const map = new mapboxgl.Map({
     sources: { landen: { type: 'vector', url: 'mapbox://mapbox.country-boundaries-v1' } },
     layers: [
       { id: 'achtergrond', type: 'background', paint: { 'background-color': KLEUR_LICHT } },
-      { id: 'omringende-landen', type: 'fill', source: 'landen', 'source-layer': 'country_boundaries', filter: wereldFilter, paint: { 'fill-color': KLEUR_OMRINGEND } },
       { id: 'reisland-vlak', type: 'fill', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'fill-color': KLEUR_BLAUW } },
       { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
     ]
   },
-  center: [-78.360545, -0.8313735],
+  center: [-78.3607565, -0.8314517499999999],
   zoom: 4
 });
 

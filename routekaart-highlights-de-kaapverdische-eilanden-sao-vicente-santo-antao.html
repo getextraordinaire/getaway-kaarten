@@ -39,8 +39,8 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"São Vicente","country":"Cape Verde","toonLand":"Cape Verde","days":3,"lng":-24.98767,"lat":16.871542,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 1-3","isStart":true,"isEind":false},{"order":2,"destination":"Ponta do Sol","country":"Cape Verde","toonLand":"","days":3,"lng":-25.123848,"lat":17.169904,"type":"destination","transport":"ferry","bekendheid":2,"day_label":"Dag 4-6","isStart":false,"isEind":false},{"order":3,"destination":"Cruzinha","country":"Cape Verde","toonLand":"","days":2,"lng":-25.165985,"lat":17.170348,"type":"destination","transport":"car","bekendheid":1,"day_label":"Dag 7-8","isStart":false,"isEind":false},{"order":4,"destination":"São Vicente","country":"Cape Verde","toonLand":"","days":1,"lng":-24.98767,"lat":16.871542,"type":"destination","transport":"ferry","bekendheid":2,"day_label":"Dag 9","isStart":false,"isEind":false},{"order":5,"destination":"São Vicente","country":"Cape Verde","toonLand":"","days":0,"lng":-24.98767,"lat":16.871542,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 10","isStart":false,"isEind":true}];
-const segments = [{"from":[-24.98767,16.871542],"to":[-25.123848,17.169904],"transport":"ferry"},{"from":[-25.123848,17.169904],"to":[-25.165985,17.170348],"transport":"car"},{"from":[-25.165985,17.170348],"to":[-24.98767,16.871542],"transport":"ferry"},{"from":[-24.98767,16.871542],"to":[-24.98767,16.871542],"transport":"car"}];
+const stops = [{"order":1,"destination":"São Vicente","country":"Cape Verde","toonLand":"Cape Verde","days":3,"lng":-24.98767,"lat":16.871542,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 1-3","isStart":true,"isEind":false},{"order":4,"destination":"São Vicente","country":"Cape Verde","toonLand":"","days":1,"lng":-24.98767,"lat":16.871542,"type":"destination","transport":"ferry","bekendheid":2,"day_label":"Dag 9","isStart":false,"isEind":false},{"order":5,"destination":"São Vicente","country":"Cape Verde","toonLand":"","days":0,"lng":-24.98767,"lat":16.871542,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 10","isStart":false,"isEind":true}];
+const segments = [{"from":[-24.98767,16.871542],"to":[-24.98767,16.871542],"transport":"ferry"},{"from":[-24.98767,16.871542],"to":[-24.98767,16.871542],"transport":"car"}];
 const tripCountries = ["CV"];
 
 const KLEUR_LICHT = '#F9FBFB';
@@ -114,7 +114,7 @@ const map = new mapboxgl.Map({
       { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
     ]
   },
-  center: [-25.050568600000002, 16.990975600000002],
+  center: [-24.987669999999998, 16.871542],
   zoom: 4
 });
 

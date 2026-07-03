@@ -126,7 +126,6 @@ const KLEUR_LICHT = '#F9FBFB';
 const KLEUR_BLAUW = '#B9D9E0';
 const KLEUR_DONKER = '#3B4651';
 const KLEUR_GRIJS = '#ABC6CB';
-const KLEUR_OMRINGEND = '#EAF2F4';
 
 const transportConfig = {
   flight:  { dash: [2, 2], width: 2, label: 'Vlucht',     svg: 'M21,16v-2l-8-5V3.5C13,2.67,12.33,2,11.5,2S10,2.67,10,3.5V9l-8,5v2l8-2.5V19l-2,1.5V22l3.5-1l3.5,1v-1.5L13,19v-5.5L21,16z' },
@@ -173,8 +172,6 @@ function boogCoords(from, to, transport, punten) {
   return coords;
 }
 
-const wereldFilter = ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]];
-
 const landenFilter = ['all',
   ['any', ['==', ['get', 'worldview'], 'all'], ['in', 'US', ['get', 'worldview']]],
   ['in', ['get', 'iso_3166_1'], ['literal', tripCountries]]
@@ -188,7 +185,6 @@ const map = new mapboxgl.Map({
     sources: { landen: { type: 'vector', url: 'mapbox://mapbox.country-boundaries-v1' } },
     layers: [
       { id: 'achtergrond', type: 'background', paint: { 'background-color': KLEUR_LICHT } },
-      { id: 'omringende-landen', type: 'fill', source: 'landen', 'source-layer': 'country_boundaries', filter: wereldFilter, paint: { 'fill-color': KLEUR_OMRINGEND } },
       { id: 'reisland-vlak', type: 'fill', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'fill-color': KLEUR_BLAUW } },
       { id: 'reisland-grens', type: 'line', source: 'landen', 'source-layer': 'country_boundaries', filter: landenFilter, paint: { 'line-color': KLEUR_GRIJS, 'line-width': 1.5 } }
     ]

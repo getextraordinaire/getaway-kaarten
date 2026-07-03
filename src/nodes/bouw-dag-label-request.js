@@ -37,8 +37,8 @@ return items.map(function(item) {
     'Reisinformatie:\n' + reisinfo;
 
   const requestBody = {
-    model: 'claude-opus-4-8',
-    max_tokens: 2000,
+    model: 'claude-fable-5',
+    max_tokens: 8000,
     messages: [{ role: 'user', content: prompt }]
   };
 

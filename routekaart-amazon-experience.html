@@ -39,7 +39,7 @@
 <script>
 mapboxgl.accessToken = new URLSearchParams(window.location.search).get('t') || '';
 
-const stops = [{"order":1,"destination":"Quito","country":"Ecuador","toonLand":"Ecuador","days":1,"lng":-78.51131,"lat":-0.221173,"type":"destination","transport":"flight","bekendheid":2,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Baños","country":"Ecuador","toonLand":"","days":6,"lng":-78.423406,"lat":-1.397961,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 2-8","isStart":false,"isEind":false},{"order":3,"destination":"Amazon Rescue Center","country":"Ecuador","toonLand":"","days":13,"lng":-77.997,"lat":-1.4855,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 9-22","isStart":false,"isEind":false},{"order":4,"destination":"Quito","country":"Ecuador","toonLand":"","days":0,"lng":-78.51131,"lat":-0.221173,"type":"transit","transport":"car","bekendheid":2,"day_label":"Dag 22","isStart":false,"isEind":true}];
+const stops = [{"order":1,"destination":"Quito","country":"Ecuador","toonLand":"Ecuador","days":1,"lng":-78.51131,"lat":-0.221173,"type":"destination","transport":"flight","bekendheid":3,"day_label":"Dag 1","isStart":true,"isEind":false},{"order":2,"destination":"Baños","country":"Ecuador","toonLand":"","days":6,"lng":-78.423406,"lat":-1.397961,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 2-8","isStart":false,"isEind":false},{"order":3,"destination":"Amazon Rescue Center","country":"Ecuador","toonLand":"","days":13,"lng":-77.997,"lat":-1.4855,"type":"destination","transport":"car","bekendheid":2,"day_label":"Dag 9-22","isStart":false,"isEind":false},{"order":4,"destination":"Quito","country":"Ecuador","toonLand":"","days":0,"lng":-78.51131,"lat":-0.221173,"type":"transit","transport":"car","bekendheid":3,"day_label":"Dag 22","isStart":false,"isEind":true}];
 const segments = [{"from":[-78.51131,-0.221173],"to":[-78.423406,-1.397961],"transport":"car"},{"from":[-78.423406,-1.397961],"to":[-77.997,-1.4855],"transport":"car"},{"from":[-77.997,-1.4855],"to":[-78.51131,-0.221173],"transport":"car"}];
 const tripCountries = ["EC"];
 
@@ -100,6 +100,7 @@ const landenFilter = ['all',
 
 const map = new mapboxgl.Map({
   container: 'map',
+  attributionControl: false,
   style: {
     version: 8,
     glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf',
@@ -116,6 +117,7 @@ const map = new mapboxgl.Map({
 
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+map.addControl(new mapboxgl.AttributionControl({ compact: true }), 'bottom-right');
 
 map.on('load', function() {
 

@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-05T15:45:55.676Z",
+  "updatedAt": "2026-10-16T19:44:28.582Z",
   "createdAt": "2026-05-18T14:36:28.140Z",
   "id": "XPSwqndBGvARd0zq",
   "name": "Draft mapgenerator Claude Fable 5",
   "description": "Map generator",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {},
@@ -805,7 +805,7 @@
   },
   "nodeGroups": [],
   "pinData": {},
-  "versionId": "e8cc173e-bd4f-4e51-bb04-04dbe9f41915",
+  "versionId": "3d4e3ae5-5f14-4071-8e19-1e1d7915a29e",
   "activeVersionId": null,
   "versionCounter": 539,
   "triggerCount": 1,

@@ -1,11 +1,16 @@
 {
-  "updatedAt": "2026-10-16T19:44:28.582Z",
-  "createdAt": "2026-05-18T14:36:28.140Z",
   "id": "XPSwqndBGvARd0zq",
   "name": "Draft mapgenerator Claude Fable 5",
   "description": "Map generator",
   "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-05-18T14:36:28.140Z",
+  "updatedAt": "2026-10-16T19:44:28.582Z",
   "isArchived": true,
+  "versionId": "3d4e3ae5-5f14-4071-8e19-1e1d7915a29e",
+  "versionCounter": 539,
+  "sourceWorkflowId": null,
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {},
@@ -788,6 +793,7 @@
       ]
     }
   },
+  "nodeGroups": [],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
@@ -798,38 +804,32 @@
       "recurrenceRules": []
     }
   },
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true,
     "aiBuilderAssisted": true,
     "builderVariant": "mcp"
   },
-  "nodeGroups": [],
-  "pinData": {},
-  "versionId": "3d4e3ae5-5f14-4071-8e19-1e1d7915a29e",
-  "activeVersionId": null,
-  "versionCounter": 539,
-  "triggerCount": 1,
-  "sourceWorkflowId": null,
+  "tags": [],
   "shared": [
     {
-      "updatedAt": "2026-05-18T14:36:28.140Z",
-      "createdAt": "2026-05-18T14:36:28.140Z",
       "role": "workflow:owner",
       "workflowId": "XPSwqndBGvARd0zq",
       "projectId": "ZCPBRpwl8u0y9vpR",
       "project": {
-        "updatedAt": "2025-08-07T20:18:08.022Z",
-        "createdAt": "2025-08-07T20:17:06.782Z",
         "id": "ZCPBRpwl8u0y9vpR",
         "name": "Getaway Travel <tools@getawaytravel.nl>",
         "type": "personal",
         "icon": null,
         "description": null,
         "customTelemetryTags": [],
-        "creatorId": "bf908728-6154-42a7-8478-b1965a25e7b0"
-      }
+        "creatorId": "bf908728-6154-42a7-8478-b1965a25e7b0",
+        "createdAt": "2025-08-07T20:17:06.782Z",
+        "updatedAt": "2025-08-07T20:18:08.022Z"
+      },
+      "createdAt": "2026-05-18T14:36:28.140Z",
+      "updatedAt": "2026-05-18T14:36:28.140Z"
     }
   ],
-  "tags": [],
   "activeVersion": null
 }
